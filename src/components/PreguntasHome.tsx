@@ -1,6 +1,7 @@
 'use client';
 
 import { company, preguntas } from '@/app/constants/constants';
+import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -28,27 +29,13 @@ const PreguntasHome = () => {
               transition={{ duration: 0.5 }}
               viewport={{ once: true, margin: '0px 0px -100px 0px' }}
             >
-              <div className='inline-flex items-center gap-4 mb-3'>
-                <div className='w-10 h-px bg-color-primary/70' />
-                <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold'>
-                  FAQ
-                </span>
-                <div className='w-10 h-px bg-color-primary/70' />
-              </div>
-              <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight font-semibold tracking-tight'>
-                Preguntas frecuentes
-              </h2>
+              <SectionTitleItaly
+                title='Preguntas frecuentes'
+                className='!mb-0'
+                subtitle='Resolvemos todas tus dudas sobre nuestros servicios y procesos de compra'
+                subtitleVariant='section'
+              />
             </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-              className='text-sm sm:text-base md:text-lg text-white/80 max-w-3xl mx-auto leading-relaxed'
-            >
-              Resolvemos todas tus dudas sobre nuestros servicios y procesos de
-              compra
-            </motion.p>
           </div>
 
           {/* Grid de preguntas */}

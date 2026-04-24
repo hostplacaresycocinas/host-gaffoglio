@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 const beneficios = [
   {
@@ -54,24 +55,21 @@ const Proceso = () => {
   return (
     <section className='py-16 md:py-24 lg:py-28'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10'>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className='text-center mb-10 md:mb-12'
-        >
-          <div className='inline-flex items-center gap-4 mb-3'>
-            <div className='w-10 h-px bg-color-primary/70' />
-            <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold'>
-              Proceso
-            </span>
-            <div className='w-10 h-px bg-color-primary/70' />
-          </div>
-          <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight tracking-tight max-w-3xl mx-auto'>
-            Una experiencia simple, transparente y profesional
-          </h2>
-        </motion.div>
+        <div className='text-center mb-10 md:mb-12'>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <SectionTitleItaly
+              title='Proceso'
+              className='!mb-0'
+              subtitle='Una experiencia simple, transparente y profesional'
+              subtitleVariant='section'
+            />
+          </motion.div>
+        </div>
 
         <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6'>
           {beneficios.map((b, i) => (

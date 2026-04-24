@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { API_BASE_URL, TENANT } from '@/app/constants/constants';
+import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 interface Brand {
   id: string;
@@ -62,18 +63,7 @@ const BrandsSection = () => {
     return (
       <section className='mt-8 mb-16 md:mt-12 md:mb-24'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='text-center mb-4 md:mb-6'>
-            <div className='inline-flex items-center gap-4 mb-3'>
-              <div className='w-10 h-px bg-color-primary/70' />
-              <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold'>
-                Marcas
-              </span>
-              <div className='w-10 h-px bg-color-primary/70' />
-            </div>
-            <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight font-semibold tracking-tight'>
-              Modelos 0km
-            </h2>
-          </div>
+          <SectionTitleItaly title='Modelos 0km' />
           <div className='flex justify-center py-8'>
             <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-color-primary'></div>
           </div>
@@ -91,25 +81,19 @@ const BrandsSection = () => {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         {/* Título y texto de invitación */}
         <div className='mb-8 md:mb-12 text-center'>
-          <div className='inline-flex items-center gap-4 mb-3'>
-            <div className='w-10 h-px bg-color-primary/70' />
-            <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold'>
-              Marcas
-            </span>
-            <div className='w-10 h-px bg-color-primary/70' />
-          </div>
-          <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight font-semibold tracking-tight mb-3'>
-            Modelos 0km
-          </h2>
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
-            className='text-white/80 text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed'
           >
-            Elegí la marca que estás buscando y conocé los modelos disponibles
-          </motion.p>
+            <SectionTitleItaly
+              title='Modelos 0km'
+              className='!mb-0'
+              subtitle='Elegí la marca que estás buscando y conocé los modelos disponibles'
+              subtitleVariant='section'
+            />
+          </motion.div>
         </div>
 
         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8'>

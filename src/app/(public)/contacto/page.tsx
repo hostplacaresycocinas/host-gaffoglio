@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
+import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 const whatsappUrl = `https://api.whatsapp.com/send?phone=549${company.whatsapp[0]}&text=Hola! Quería hacer una consulta sobre un vehículo`;
 const whatsappLabel = `+54 9 ${company.whatsapp[0]}`;
@@ -43,22 +44,14 @@ const ContactoPage = () => {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className='inline-flex items-center gap-4 mb-3 md:mb-4'
               >
-                <div className='w-10 h-px bg-color-primary/70' />
-                <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'>
-                  Contacto
-                </span>
-                <div className='w-10 h-px bg-color-primary/70' />
+                <SectionTitleItaly
+                  title='Contáctanos'
+                  as='h1'
+                  className='!mb-0'
+                  titleClassName='[text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'
+                />
               </motion.div>
-              <motion.h1
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className='text-white/90 text-xl sm:text-2xl md:text-3xl leading-tight font-semibold tracking-tight [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)] max-w-3xl mx-auto'
-              >
-                Escribinos y te asesoramos
-              </motion.h1>
             </div>
           </div>
         </div>

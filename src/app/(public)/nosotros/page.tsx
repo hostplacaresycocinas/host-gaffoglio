@@ -5,6 +5,7 @@ import { company } from '@/app/constants/constants';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
+import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 const NosotrosPage = () => {
   return (
@@ -31,22 +32,14 @@ const NosotrosPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className='inline-flex items-center gap-4 mb-4 md:mb-6'
           >
-            <div className='w-10 h-px bg-color-primary/70' />
-            <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'>
-              Sobre Nosotros
-            </span>
-            <div className='w-10 h-px bg-color-primary/70' />
+            <SectionTitleItaly
+              title='Sobre nosotros'
+              as='h1'
+              className='!mb-0'
+              titleClassName='[text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'
+            />
           </motion.div>
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className='text-white/90 text-xl sm:text-2xl md:text-3xl leading-tight font-semibold tracking-tight [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)] max-w-3xl mx-auto'
-          >
-            Tu socio de confianza para encontrar el vehículo perfecto
-          </motion.p>
         </div>
       </section>
 

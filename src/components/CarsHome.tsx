@@ -9,6 +9,7 @@ import { company } from '@/app/constants/constants';
 import catalogo from '@/data/catalogo.json';
 import AutoScroll from 'embla-carousel-auto-scroll';
 import CatalogGalleryBadge from '@/components/CatalogGalleryBadge';
+import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 interface Auto {
   id: string;
@@ -88,18 +89,7 @@ const CarsHome = ({ title }: CarsHomeProps) => {
     return (
       <section className='flex justify-center w-full'>
         <div className='max-w-7xl w-full mx-4 sm:mx-6 md:mx-8 lg:mx-10 overflow-hidden'>
-          <div className='text-center mb-4 md:mb-6 lg:mb-8'>
-            <div className='inline-flex items-center gap-4 mb-3'>
-              <div className='w-10 h-px bg-color-primary/70' />
-              <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold'>
-                Ingresos
-              </span>
-              <div className='w-10 h-px bg-color-primary/70' />
-            </div>
-            <h3 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight font-semibold tracking-tight'>
-              {title}
-            </h3>
-          </div>
+          <SectionTitleItaly title={title} as='h3' />
           <div className='flex justify-center py-8'>
             <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-color-primary'></div>
           </div>
@@ -112,18 +102,7 @@ const CarsHome = ({ title }: CarsHomeProps) => {
     return (
       <section className='flex justify-center w-full'>
         <div className='max-w-7xl w-full mx-4 sm:mx-6 md:mx-8 lg:mx-10 overflow-hidden'>
-          <div className='text-center mb-4 md:mb-6 lg:mb-8'>
-            <div className='inline-flex items-center gap-4 mb-3'>
-              <div className='w-10 h-px bg-color-primary/70' />
-              <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold'>
-                Ingresos
-              </span>
-              <div className='w-10 h-px bg-color-primary/70' />
-            </div>
-            <h3 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight font-semibold tracking-tight'>
-              {title}
-            </h3>
-          </div>
+          <SectionTitleItaly title={title} as='h3' />
           <div className='text-center py-8 text-red-500'>{error}</div>
         </div>
       </section>
@@ -134,18 +113,7 @@ const CarsHome = ({ title }: CarsHomeProps) => {
     return (
       <section className='flex justify-center w-full'>
         <div className='max-w-7xl w-full mx-4 sm:mx-6 md:mx-8 lg:mx-10 overflow-hidden'>
-          <div className='text-center mb-4 md:mb-6 lg:mb-8'>
-            <div className='inline-flex items-center gap-4 mb-3'>
-              <div className='w-10 h-px bg-color-primary/70' />
-              <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold'>
-                Ingresos
-              </span>
-              <div className='w-10 h-px bg-color-primary/70' />
-            </div>
-            <h3 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight font-semibold tracking-tight'>
-              {title}
-            </h3>
-          </div>
+          <SectionTitleItaly title={title} as='h3' />
           <div className='text-center py-8 text-color-text'>
             No hay vehículos disponibles
           </div>
@@ -157,18 +125,7 @@ const CarsHome = ({ title }: CarsHomeProps) => {
   return (
     <section className='flex justify-center w-full'>
       <div className='max-w-7xl w-full mx-4 sm:mx-6 md:mx-8 lg:mx-10 overflow-hidden'>
-        <div className='text-center mb-4 md:mb-6 lg:mb-8'>
-          <div className='inline-flex items-center gap-4 mb-3'>
-            <div className='w-10 h-px bg-color-primary/70' />
-            <span className='text-white text-xs tracking-[0.5em] uppercase font-semibold'>
-              Ingresos
-            </span>
-            <div className='w-10 h-px bg-color-primary/70' />
-          </div>
-          <h3 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight font-semibold tracking-tight'>
-            {title}
-          </h3>
-        </div>
+        <SectionTitleItaly title={title} as='h3' />
 
         <div
           onMouseUp={() => setClicked(false)}
