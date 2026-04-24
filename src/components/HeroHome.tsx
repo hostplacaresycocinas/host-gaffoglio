@@ -179,14 +179,14 @@ const HeroHome = () => {
               className='flex items-center justify-center gap-2 mb-4 md:mb-6'
             >
               <span
-                className='w-20 h-0.5 bg-gradient-to-l from-color-primary/70 to-color-primary/10'
+                className='w-20 lg:w-28 h-0.5 bg-gradient-to-l from-color-secondary to-color-primary/10'
                 aria-hidden
               />
-              <h1 className='font-exo italic text-nowrap text-color-primary-light/90 text-xs md:text-sm font-semibold tracking-[0.25em]'>
+              <h1 className='font-exo italic text-nowrap text-color-title-light/90 text-xs md:text-sm font-semibold tracking-[0.25em]'>
                 {company.name}
               </h1>
               <span
-                className='w-20 h-0.5 bg-gradient-to-r from-color-primary/70 to-color-primary/10'
+                className='w-20 lg:w-28 h-0.5 bg-gradient-to-r from-color-primary to-color-primary/10'
                 aria-hidden
               />
             </motion.div>
@@ -242,7 +242,7 @@ const HeroHome = () => {
               </Link>
               <Link
                 href='/0km'
-                className='group inline-flex items-center justify-center gap-2 px-6 md:px-8 py-4 border border-white/40 text-white font-medium text-lg tracking-wide hover:border-color-primary-light hover:text-color-primary-light transition-all duration-300 backdrop-blur bg-white/5'
+                className='group inline-flex items-center justify-center gap-2 px-6 md:px-8 py-4 border border-white/40 text-white font-medium text-lg tracking-wide hover:border-color-secondary-light hover:text-color-secondary-light transition-all duration-300 backdrop-blur bg-white/5'
               >
                 Catálogo 0km
                 <svg

@@ -49,7 +49,9 @@ const Footer = () => {
                 </div>
 
                 <p className='text-white/80 text-sm lg:text-base mb-8 max-w-md leading-relaxed'>
-                  {company.footer}
+                  Concesionaria multimarca en Sáenz Peña, Chaco.
+                  <br />
+                  Autos 0km y usados seleccionados.
                 </p>
 
                 {/* Redes sociales */}

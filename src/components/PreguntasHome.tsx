@@ -43,10 +43,10 @@ const PreguntasHome = () => {
             {preguntas.map((pregunta, index) => (
               <motion.div
                 key={pregunta.id}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.5 }}
               >
                 <div
                   onClick={() => toggleAnswer(pregunta.id)}
@@ -75,10 +75,14 @@ const PreguntasHome = () => {
                       {/* Botón de toggle */}
                       <div className='flex-shrink-0'>
                         <div
-                          className={`w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center transition-all duration-300 bg-color-primary hover:bg-color-primary-dark ${
-                            company.dark
-                              ? 'text-color-title'
-                              : 'text-color-title-light'
+                          className={`w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                            activeAnswer === pregunta.id
+                              ? 'bg-color-secondary hover:bg-color-secondary-dark text-color-title-light'
+                              : `bg-color-primary hover:bg-color-primary-dark ${
+                                  company.dark
+                                    ? 'text-color-title'
+                                    : 'text-color-title-light'
+                                }`
                           }`}
                         >
                           <motion.svg
