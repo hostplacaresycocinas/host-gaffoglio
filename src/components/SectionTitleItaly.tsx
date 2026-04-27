@@ -16,8 +16,7 @@ const titleBaseClass =
   'text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight font-semibold tracking-tight';
 
 const subtitleVariantClass = {
-  section:
-    'text-white/80 text-sm sm:text-base md:text-lg leading-relaxed',
+  section: 'text-white/80 text-sm sm:text-base md:text-lg leading-relaxed',
   banner:
     'text-white/90 text-lg sm:text-xl md:text-2xl font-semibold tracking-tight [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]',
 } as const;
@@ -45,10 +44,10 @@ export function SectionTitleItaly({
     subtitle != null && subtitle !== false && subtitle !== '';
 
   return (
-    <div
-      className={cn('text-center mb-4 md:mb-6 lg:mb-8', className)}
-    >
-      <Tag className={cn(titleBaseClass, titleClassName)}>{title}</Tag>
+    <div className={cn('text-center mb-4 md:mb-6 lg:mb-8', className)}>
+      <Tag className={cn('font-exo italic', titleBaseClass, titleClassName)}>
+        {title}
+      </Tag>
       <div
         className='mx-auto mt-2 h-0.5 w-full max-w-[16rem] sm:max-w-xs rounded-full'
         style={italyLineMask}
@@ -74,7 +73,10 @@ export function SectionTitleItaly({
           </p>
         ) : (
           <div
-            className={cn('mt-3 max-w-3xl mx-auto text-center', subtitleClassName)}
+            className={cn(
+              'mt-3 max-w-3xl mx-auto text-center',
+              subtitleClassName,
+            )}
           >
             {subtitle}
           </div>

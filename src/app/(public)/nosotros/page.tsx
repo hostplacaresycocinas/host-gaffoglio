@@ -45,9 +45,9 @@ const NosotrosPage = () => {
 
       {/* Sección de historia */}
       <section className='py-8 md:py-12'>
-        <div className='max-w-6xl mx-auto px-4'>
+        <div className='max-w-6xl mx-auto px-4 space-y-12 md:space-y-16'>
           <div className='grid lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-16 items-center justify-center'>
-            {/* Imagen */}
+            {/* Imagen: los inicios */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -58,16 +58,15 @@ const NosotrosPage = () => {
               <div className='mx-auto relative max-w-md lg:max-w-full rounded-xl md:rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] border border-white/10 group'>
                 <Image
                   src='/assets/nosotros/nosotros-1.webp'
-                  alt={`Equipo de ${company.name}`}
+                  alt={`Primer local de ${company.name}`}
                   fill
                   className='object-cover w-full h-full'
                 />
               </div>
-              {/* Elemento decorativo */}
               <div className='absolute -bottom-4 -right-4 w-24 h-24 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full -z-10 hidden lg:block'></div>
             </motion.div>
 
-            {/* Texto */}
+            {/* Texto: los inicios */}
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -76,39 +75,68 @@ const NosotrosPage = () => {
               className='max-w-lg flex flex-col items-center lg:items-start justify-center text-center lg:text-left'
             >
               <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight mb-5 max-w-xl [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'>
-                <span className='font-bold'>{company.name}</span>
-                <br />
-                <span className='font-bold'>Concesionaria multimarca</span>
+                <span className='font-bold'>Compromiso y confianza</span>
               </h2>
               <div className='space-y-4 text-white/80 text-sm sm:text-base leading-relaxed max-w-prose'>
                 <p>
-                  En {company.name} te ayudamos a encontrar el vehículo ideal,
-                  con unidades usadas y 0km cuidadosamente seleccionadas para
-                  distintos estilos de manejo y presupuesto.
+                  En Gaffoglio Multimarcas llevamos más de 10 años acompañando a
+                  familias, profesionales y emprendedores de Sáenz Peña y de
+                  toda la región a encontrar el auto que necesitan. Abrimos las
+                  puertas de nuestra primera sucursal en Calle 11 entre 8 y 10.
                 </p>
                 <p>
-                  Brindamos asesoramiento claro, opciones de financiación y una
-                  atención transparente de principio a fin, para que vivas una
-                  experiencia simple, segura y sin sorpresas.
+                  Desde el comienzo trabajamos con compromiso en cada venta,
+                  construyendo relaciones solidas y creciendo junto a quienes
+                  nos eligen. Por eso seleccionamos cada unidad con cuidado,
+                  ofrecemos planes de financiación reales y te acompañamos
+                  también después de que te llevás tu auto.
                 </p>
-                <div className='pt-3'>
-                  <div className='inline-flex items-center justify-center lg:justify-start gap-6 rounded-xl bg-white/5 backdrop-blur-md border border-color-primary/30 px-5 py-3'>
-                    <div className='text-center lg:text-left'>
-                      <p className='text-white/90 font-semibold text-sm md:text-base leading-none'>
-                        Vehículos verificados
-                      </p>
-                    </div>
-
-                    <div className='w-px h-8 bg-color-primary/35' />
-
-                    <div className='text-center lg:text-left'>
-                      <p className='text-white/90 font-semibold text-sm md:text-base leading-none'>
-                        Financiación
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
+            </motion.div>
+          </div>
+
+          <div className='grid lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-16 items-center justify-center'>
+            {/* Texto: hoy */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className='order-2 lg:order-1 max-w-lg flex flex-col items-center lg:items-start justify-center text-center lg:text-left'
+            >
+              <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight mb-5 max-w-xl [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'>
+                <span className='font-bold'>Experiencia y dedicación</span>
+              </h2>
+              <div className='space-y-4 text-white/80 text-sm sm:text-base leading-relaxed max-w-prose'>
+                <p>
+                  Actualmente contamos con nuestra segunda sede sobre Calle 10 y
+                  continuamos ampliando servicios para brindarte una experiencia
+                  mas comoda, agil y profesional.
+                </p>
+                <p>
+                  Seguimos fieles a nuestra misión: ofrecer confianza, atención
+                  cercana y autos seleccionados para cada cliente.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Imagen: hoy */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className='order-1 lg:order-2 relative'
+            >
+              <div className='mx-auto relative max-w-md lg:max-w-full rounded-xl md:rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] border border-white/10 group'>
+                <Image
+                  src='/assets/nosotros/nosotros-2.webp'
+                  alt={`Segunda sede de ${company.name}`}
+                  fill
+                  className='object-cover w-full h-full'
+                />
+              </div>
+              <div className='absolute -bottom-4 -left-4 w-24 h-24 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full -z-10 hidden lg:block'></div>
             </motion.div>
           </div>
         </div>
@@ -137,7 +165,7 @@ const NosotrosPage = () => {
 
           {/* Valores Grid */}
           <div className='grid md:grid-cols-3 gap-5 lg:gap-6'>
-            {/* Valor 1 - Excelencia */}
+            {/* Valor 1 - Excelencia (acento verde) */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -146,12 +174,12 @@ const NosotrosPage = () => {
               className='relative'
             >
               <div className='bg-white/5 backdrop-blur-md relative overflow-hidden rounded-xl h-full border border-white/15'>
-                <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-color-primary/50 to-transparent'></div>
+                <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#009246]/45 to-transparent'></div>
 
                 <div className='relative p-5 md:p-6'>
-                  <div className='w-11 h-11 bg-color-primary/15 border border-color-primary/35 rounded-lg flex items-center justify-center mb-4'>
+                  <div className='w-11 h-11 bg-[#009246]/15 border border-[#009246]/40 rounded-lg flex items-center justify-center mb-4'>
                     <svg
-                      className='w-5 h-5 text-color-primary-light'
+                      className='w-5 h-5 text-[#7ED9A8]'
                       fill='none'
                       viewBox='0 0 24 24'
                       stroke='currentColor'
@@ -187,12 +215,12 @@ const NosotrosPage = () => {
               className='relative'
             >
               <div className='bg-white/5 backdrop-blur-md relative overflow-hidden rounded-xl h-full border border-white/15'>
-                <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-color-primary/50 to-transparent'></div>
+                <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent'></div>
 
                 <div className='relative p-5 md:p-6'>
-                  <div className='w-11 h-11 bg-color-primary/15 border border-color-primary/35 rounded-lg flex items-center justify-center mb-4'>
+                  <div className='w-11 h-11 bg-white/10 border border-white/30 rounded-lg flex items-center justify-center mb-4'>
                     <svg
-                      className='w-5 h-5 text-color-primary-light'
+                      className='w-5 h-5 text-white/85'
                       fill='none'
                       viewBox='0 0 24 24'
                       stroke='currentColor'
@@ -231,7 +259,7 @@ const NosotrosPage = () => {
                 <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-color-primary/50 to-transparent'></div>
 
                 <div className='relative p-5 md:p-6'>
-                  <div className='w-11 h-11 bg-color-primary/15 border border-color-primary/35 rounded-lg flex items-center justify-center mb-4'>
+                  <div className='w-11 h-11 bg-[#CE2B37]/15 border border-color-primary/40 rounded-lg flex items-center justify-center mb-4'>
                     <svg
                       className='w-5 h-5 text-color-primary-light'
                       fill='none'
