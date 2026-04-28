@@ -5,6 +5,7 @@ import ClockIcon from '@/components/icons/ClockIcon';
 import EmailFillIcon from '@/components/icons/EmailFillIcon';
 import FacebookIcon from '@/components/icons/FacebookIcon';
 import InstagramIcon from '@/components/icons/InstagramIcon';
+import ShareIcon from '@/components/icons/ShareIcon';
 import WhatsappFillIcon from '@/components/icons/WhatsappFillIcon';
 import { motion } from 'framer-motion';
 import Header from '@/components/Header';
@@ -113,7 +114,7 @@ const ContactoPage = () => {
               <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-color-primary/50 to-transparent' />
               <div className='flex items-center gap-3 mb-5 md:mb-6'>
                 <span className='flex w-11 h-11 items-center justify-center rounded-xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light'>
-                  <InstagramIcon className='w-6 h-6' aria-hidden />
+                  <ShareIcon className='w-6 h-6' aria-hidden />
                 </span>
                 <h3 className='text-white/90 text-xl md:text-2xl font-bold'>
                   Redes
