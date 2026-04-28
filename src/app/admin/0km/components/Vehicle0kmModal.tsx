@@ -869,7 +869,7 @@ const Vehicle0kmModal = ({
                       </button>
                       <button
                         type='submit'
-                        className='px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-color-primary-admin hover:bg-color-primary-admin/90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-color-primary-admin flex items-center'
+                        className='px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-color-primary-admin hover:bg-color-primary-admin/80 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-color-primary-admin flex items-center'
                         disabled={submitting}
                       >
                         {submitting ? (

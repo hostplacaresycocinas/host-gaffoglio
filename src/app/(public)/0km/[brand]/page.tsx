@@ -2,7 +2,7 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { company, API_BASE_URL, TENANT } from '@/app/constants/constants';
+import { company, API_BASE_URL, TENANT_0KM } from '@/app/constants/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -59,7 +59,7 @@ const ZeroKmBrandPage = () => {
         `${API_BASE_URL}/api/0km/brands?active=true`,
         {
           headers: {
-            'x-tenant-subdomain': TENANT,
+            'x-tenant-subdomain': TENANT_0KM,
           },
         },
       );
@@ -99,7 +99,7 @@ const ZeroKmBrandPage = () => {
           `${API_BASE_URL}/api/0km/models?brand0kmId=${foundBrand.id}&active=true`,
           {
             headers: {
-              'x-tenant-subdomain': TENANT,
+              'x-tenant-subdomain': TENANT_0KM,
             },
           },
         );

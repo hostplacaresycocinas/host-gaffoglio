@@ -231,7 +231,7 @@ export default function BrandModal({
             <button
               type='submit'
               disabled={loading}
-              className='flex-1 px-4 py-2 bg-color-primary-admin text-white rounded-lg hover:bg-color-primary-admin/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+              className='flex-1 px-4 py-2 bg-color-primary-admin text-white rounded-lg hover:bg-color-primary-admin/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {loading ? 'Guardando...' : initialData ? 'Actualizar' : 'Crear'}
             </button>

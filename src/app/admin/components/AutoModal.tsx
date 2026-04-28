@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState, useEffect, useRef } from 'react';
+import { Fragment, useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ImageUpload } from './ImageUpload';
 import { Auto } from '@/types/auto';
@@ -66,7 +66,7 @@ const AutoModal = ({
           año: initialData.año?.toString() || '',
           imagenes: [],
           color: '',
-          currency: initialData.currency || 'USD',
+          currency: initialData.currency || 'ARS',
           puertas: initialData.puertas || 0,
         }
       : {
@@ -79,7 +79,7 @@ const AutoModal = ({
           combustible: '',
           puertas: 0,
           precio: 0,
-          currency: 'USD',
+          currency: 'ARS',
           descripcion: '',
           imagenes: [],
           categoria: '',
@@ -106,6 +106,8 @@ const AutoModal = ({
   const combustibleInputRef = useRef<HTMLInputElement>(null);
   const puertasInputRef = useRef<HTMLInputElement>(null);
   const transmisionInputRef = useRef<HTMLInputElement>(null);
+  const modeloInputRef = useRef<HTMLInputElement>(null);
+  const lastFileSelectionTimeRef = useRef(0);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -117,7 +119,7 @@ const AutoModal = ({
 
   // Opciones para los selectores
   const combustibleOptions = ['Nafta', 'Diesel', 'GNC', 'Eléctrico', 'Híbrido'];
-  const puertasOptions = ['2', '3', '4', '5', '6', '7'];
+  const puertasOptions = ['2', '3', '4', '5'];
   const transmisionOptions = ['Manual', 'Automática', 'CVT'];
 
   // Cargar categorías del API
@@ -156,6 +158,27 @@ const AutoModal = ({
       fetchMarcas();
     }
   }, [isOpen]);
+
+  // Al abrir en modo "Agregar", enfocar el primer campo cuando el modal esté montado
+  useLayoutEffect(() => {
+    if (!isOpen || initialData) return;
+    let cancelled = false;
+    let t2: ReturnType<typeof setTimeout>;
+    const t1 = setTimeout(() => {
+      const el = modeloInputRef.current;
+      if (cancelled || !el) return;
+      el.focus();
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      t2 = setTimeout(() => {
+        if (!cancelled) modeloInputRef.current?.focus();
+      }, 100);
+    }, 150);
+    return () => {
+      cancelled = true;
+      clearTimeout(t1);
+      clearTimeout(t2!);
+    };
+  }, [isOpen, initialData]);
 
   // Cerrar los dropdowns cuando se hace clic fuera
   useEffect(() => {
@@ -251,7 +274,7 @@ const AutoModal = ({
             combustible: data.fuel,
             puertas: data.doors,
             precio: parseFloat(data.price),
-            currency: data.currency || 'USD',
+            currency: data.currency || 'ARS',
             descripcion: data.description,
             imagenes: sortedImages,
             categoria: data.Category.name,
@@ -285,13 +308,13 @@ const AutoModal = ({
         transmision: '',
         combustible: '',
         puertas: 0,
-        precio: 0,
-        currency: 'USD',
-        descripcion: '',
-        imagenes: [],
-        categoria: '',
-        color: '',
-      });
+          precio: 0,
+          currency: 'ARS',
+          descripcion: '',
+          imagenes: [],
+          categoria: '',
+          color: '',
+        });
       // Limpiar completamente el estado de imágenes al crear un auto nuevo
       setSelectedFiles([]);
       setImagesToDelete([]);
@@ -476,13 +499,40 @@ const AutoModal = ({
   };
 
   const inputStyles =
-    'mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-base shadow-sm placeholder-gray-400 focus:outline-none focus:border-color-primary-admin focus:ring-1 focus:ring-color-primary-admin transition-colors';
+    'mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-base shadow-sm placeholder-gray-400 focus:outline-none focus:border-color-primary-admin focus:ring-1 focus:ring-color-primary-admin transition-colors scroll-mt-24';
   const textareaStyles =
-    'mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-base shadow-sm placeholder-gray-400 focus:outline-none focus:border-color-primary-admin focus:ring-1 focus:ring-color-primary-admin transition-colors';
+    'mt-1 block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-base shadow-sm placeholder-gray-400 focus:outline-none focus:border-color-primary-admin focus:ring-1 focus:ring-color-primary-admin transition-colors scroll-mt-24';
+
+  const focusNextFormField = (
+    currentEl: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null
+  ) => {
+    if (!currentEl?.form) return;
+    const form = currentEl.form;
+    const list = Array.from(
+      form.querySelectorAll<HTMLElement>(
+        'input:not([type="hidden"]), select, textarea'
+      )
+    );
+    const idx = list.indexOf(currentEl as HTMLElement);
+    if (idx >= 0 && idx < list.length - 1) {
+      const next = list[idx + 1];
+      setTimeout(() => next.focus(), 0);
+      setTimeout(() => {
+        next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
+    }
+  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as='div' className='relative z-50' onClose={onClose}>
+      <Dialog
+        as='div'
+        className='relative z-50'
+        onClose={() => {
+          if (Date.now() - lastFileSelectionTimeRef.current < 500) return;
+          onClose();
+        }}
+      >
         <Transition.Child
           as={Fragment}
           enter='ease-out duration-300'
@@ -496,7 +546,7 @@ const AutoModal = ({
         </Transition.Child>
 
         <div className='fixed inset-0 overflow-y-auto'>
-          <div className='flex min-h-full items-center justify-center p-4 text-center'>
+          <div className='flex min-h-full items-center justify-center p-6 sm:p-4 text-center'>
             <Transition.Child
               as={Fragment}
               enter='ease-out duration-300'
@@ -506,7 +556,7 @@ const AutoModal = ({
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className='w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+              <Dialog.Panel className='w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-4 sm:p-6 text-left align-middle shadow-xl transition-all'>
                 <Dialog.Title
                   as='h3'
                   className='text-lg font-medium leading-6 text-gray-900 mb-4'
@@ -519,13 +569,64 @@ const AutoModal = ({
                     <div className='animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-color-primary-admin'></div>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className='space-y-4'>
+                  <form
+                    onSubmit={handleSubmit}
+                    onKeyDown={(e) => {
+                      const target = e.target as HTMLElement;
+                      const tag = target.tagName.toLowerCase();
+                      if (
+                        tag !== 'input' &&
+                        tag !== 'select' &&
+                        tag !== 'textarea'
+                      )
+                        return;
+                      const form = e.currentTarget;
+                      const focusable = form.querySelectorAll<HTMLElement>(
+                        'input:not([type="hidden"]), select, textarea'
+                      );
+                      const list = Array.from(focusable);
+                      const idx = list.indexOf(target);
+                      if (idx < 0) return;
+
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (idx < list.length - 1) {
+                          const next = list[idx + 1];
+                          next.focus();
+                          setTimeout(() => {
+                            next.scrollIntoView({
+                              behavior: 'smooth',
+                              block: 'start',
+                            });
+                          }, 150);
+                        }
+                        return;
+                      }
+
+                      if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const nextIdx = e.shiftKey ? idx - 1 : idx + 1;
+                        if (nextIdx >= 0 && nextIdx < list.length) {
+                          const next = list[nextIdx];
+                          next.focus();
+                          setTimeout(() => {
+                            next.scrollIntoView({
+                              behavior: 'smooth',
+                              block: 'start',
+                            });
+                          }, 150);
+                        }
+                      }
+                    }}
+                    className='space-y-4'
+                  >
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                       <div>
                         <label className='block text-base font-medium text-gray-700'>
-                          Modelo
+                          Título
                         </label>
                         <input
+                          ref={modeloInputRef}
                           type='text'
                           value={formData.modelo}
                           onChange={(e) =>
@@ -535,7 +636,7 @@ const AutoModal = ({
                             }))
                           }
                           className={inputStyles}
-                          placeholder='Ej: Focus, Cruze, Corolla'
+                          placeholder='Ej: Toyota Yaris, Ford Focus'
                           required
                         />
                       </div>
@@ -558,6 +659,15 @@ const AutoModal = ({
                                 }))
                               }
                               onFocus={() => setShowMarcaDropdown(true)}
+                              onBlur={(e) => {
+                                const next = e.relatedTarget as Node | null;
+                                if (marcaInputRef.current?.contains(next))
+                                  return;
+                                setTimeout(
+                                  () => setShowMarcaDropdown(false),
+                                  150
+                                );
+                              }}
                               className={inputStyles}
                               placeholder='Ej: Ford, Chevrolet, Toyota'
                               required
@@ -588,6 +698,11 @@ const AutoModal = ({
                                         .replace(/\s+/g, '-'),
                                     }));
                                     setShowMarcaDropdown(false);
+                                    focusNextFormField(
+                                      marcaInputRef.current?.querySelector(
+                                        'input'
+                                      ) as HTMLInputElement
+                                    );
                                   }}
                                 >
                                   {marca}
@@ -658,6 +773,15 @@ const AutoModal = ({
                                 }))
                               }
                               onFocus={() => setShowCategoryDropdown(true)}
+                              onBlur={(e) => {
+                                const next = e.relatedTarget as Node | null;
+                                if (categoryInputRef.current?.contains(next))
+                                  return;
+                                setTimeout(
+                                  () => setShowCategoryDropdown(false),
+                                  150
+                                );
+                              }}
                               className={inputStyles}
                               placeholder='Ej: Auto, SUV, Camioneta'
                               required
@@ -685,6 +809,11 @@ const AutoModal = ({
                                       categoria: category.name,
                                     }));
                                     setShowCategoryDropdown(false);
+                                    focusNextFormField(
+                                      categoryInputRef.current?.querySelector(
+                                        'input'
+                                      ) as HTMLInputElement
+                                    );
                                   }}
                                 >
                                   {capitalizeFirst(category.name)}
@@ -730,6 +859,17 @@ const AutoModal = ({
                                 }))
                               }
                               onFocus={() => setShowCombustibleDropdown(true)}
+                              onBlur={(e) => {
+                                const next = e.relatedTarget as Node | null;
+                                if (
+                                  combustibleInputRef.current?.contains(next)
+                                )
+                                  return;
+                                setTimeout(
+                                  () => setShowCombustibleDropdown(false),
+                                  150
+                                );
+                              }}
                               className={`${inputStyles} cursor-pointer`}
                               placeholder='Seleccionar tipo de combustible'
                               readOnly
@@ -760,6 +900,11 @@ const AutoModal = ({
                                       combustible: option,
                                     }));
                                     setShowCombustibleDropdown(false);
+                                    focusNextFormField(
+                                      combustibleInputRef.current?.querySelector(
+                                        'input'
+                                      ) as HTMLInputElement
+                                    );
                                   }}
                                 >
                                   {option}
@@ -786,11 +931,11 @@ const AutoModal = ({
                                   e.target.value === ''
                                     ? 0
                                     : parseInt(e.target.value);
-                                // Solo permitir valores válidos (2,3,4,5,6,7) o 0
+                                // Solo permitir valores válidos (2,3,4,5) o 0
                                 if (
                                   isNaN(value) ||
                                   value === 0 ||
-                                  [2, 3, 4, 5, 6, 7].includes(value)
+                                  [2, 3, 4, 5].includes(value)
                                 ) {
                                   setFormData((prev) => ({
                                     ...prev,
@@ -799,6 +944,15 @@ const AutoModal = ({
                                 }
                               }}
                               onFocus={() => setShowPuertasDropdown(true)}
+                              onBlur={(e) => {
+                                const next = e.relatedTarget as Node | null;
+                                if (puertasInputRef.current?.contains(next))
+                                  return;
+                                setTimeout(
+                                  () => setShowPuertasDropdown(false),
+                                  150
+                                );
+                              }}
                               className={inputStyles}
                               placeholder='Seleccionar cantidad de puertas'
                             />
@@ -825,6 +979,11 @@ const AutoModal = ({
                                       puertas: parseInt(option),
                                     }));
                                     setShowPuertasDropdown(false);
+                                    focusNextFormField(
+                                      puertasInputRef.current?.querySelector(
+                                        'input'
+                                      ) as HTMLInputElement
+                                    );
                                   }}
                                 >
                                   {option} puertas
@@ -851,6 +1010,17 @@ const AutoModal = ({
                                 }))
                               }
                               onFocus={() => setShowTransmisionDropdown(true)}
+                              onBlur={(e) => {
+                                const next = e.relatedTarget as Node | null;
+                                if (
+                                  transmisionInputRef.current?.contains(next)
+                                )
+                                  return;
+                                setTimeout(
+                                  () => setShowTransmisionDropdown(false),
+                                  150
+                                );
+                              }}
                               className={`${inputStyles} cursor-pointer`}
                               placeholder='Seleccionar tipo de transmisión'
                               readOnly
@@ -881,6 +1051,11 @@ const AutoModal = ({
                                       transmision: option,
                                     }));
                                     setShowTransmisionDropdown(false);
+                                    focusNextFormField(
+                                      transmisionInputRef.current?.querySelector(
+                                        'input'
+                                      ) as HTMLInputElement
+                                    );
                                   }}
                                 >
                                   {option}
@@ -973,6 +1148,9 @@ const AutoModal = ({
                       <ImageUpload
                         onImagesSelected={handleImagesSelected}
                         onImagesUpdate={handleImagesUpdate}
+                        onSelectionComplete={() => {
+                          lastFileSelectionTimeRef.current = Date.now();
+                        }}
                         defaultImages={formData.imagenes}
                         maxFiles={20}
                         accept='image/*'

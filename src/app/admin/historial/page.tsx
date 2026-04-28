@@ -232,85 +232,86 @@ export default function HistorialPage() {
           <p className='text-gray-500'>No hay autos vendidos para mostrar</p>
         </div>
       ) : (
-        <div className='space-y-6'>
+        <div className='space-y-4'>
           {autosVendidos.map((auto, idx) => (
             <motion.div
               key={auto.id}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className='bg-white rounded-lg [box-shadow:0_0_10px_rgba(0,0,0,0.07)] p-6'
+              className='bg-white rounded-lg overflow-hidden [box-shadow:0_0_10px_rgba(0,0,0,0.08)]'
             >
-              <div className='flex flex-col md:flex-row gap-6'>
-                <div className='relative w-[135px] aspect-[4/3] md:w-[150px] flex-shrink-0'>
-                  {auto.thumbnailUrl ? (
-                    <Image
-                      priority={idx < 4 ? true : false}
-                      src={auto.thumbnailUrl}
-                      alt={`${auto.model}`}
-                      fill
-                      className='object-cover rounded-lg'
-                    />
-                  ) : (
-                    <div className='w-full h-full flex items-center justify-center bg-gray-100 rounded-lg'>
-                      <span className='text-gray-400'>Sin imagen</span>
+              <div className='p-4 sm:p-6'>
+                <div className='flex flex-col sm:flex-row gap-4'>
+                  <div className='relative w-full sm:w-[155px] sm:min-h-0 aspect-[4/3] md:w-[200px] flex-shrink-0 overflow-hidden rounded-lg self-start'>
+                    {auto.thumbnailUrl ? (
+                      <Image
+                        priority={idx < 4}
+                        src={auto.thumbnailUrl}
+                        alt={`${auto.brand} ${auto.model}`}
+                        fill
+                        sizes='(max-width: 640px) 100vw, 200px'
+                        className='object-cover rounded-lg'
+                      />
+                    ) : (
+                      <div className='absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg'>
+                        <span className='text-gray-400'>Sin imagen</span>
+                      </div>
+                    )}
+                    <div className='absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg'>
+                      <span className='text-white font-semibold text-lg'>
+                        Vendido
+                      </span>
                     </div>
-                  )}
-                  <div className='absolute top-3 right-3 bg-red-500 text-white px-3 py-1.5 rounded-full text-base font-medium'>
-                    Vendido
+                    <button
+                      onClick={() => confirmarEliminarVenta(auto)}
+                      disabled={eliminando === auto.id}
+                      className='absolute top-2 right-2 z-10 sm:hidden p-2 bg-white/90 hover:bg-white rounded-full shadow-sm transition-colors text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-200'
+                      title='Eliminar venta del historial'
+                    >
+                      {eliminando === auto.id ? (
+                        <div className='h-5 w-5 border-t-2 border-red-500 border-solid rounded-full animate-spin' />
+                      ) : (
+                        <Trash2 size={20} />
+                      )}
+                    </button>
                   </div>
-                </div>
-                <div className='flex-grow'>
-                  <div className='space-y-4'>
-                    <div className='flex justify-between items-start'>
-                      <div>
-                        <h3 className='text-xl font-semibold text-color-text'>
+
+                  <div className='flex-grow min-w-0'>
+                    <div className='flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3'>
+                      <div className='min-w-0'>
+                        <h3 className='text-xl lg:text-2xl font-semibold text-gray-900 line-clamp-2'>
                           {auto.model}
                         </h3>
-                        <p className='text-gray-600 mt-1'>{auto.year}</p>
-                      </div>
-                      <button
-                        onClick={() => confirmarEliminarVenta(auto)}
-                        disabled={eliminando === auto.id}
-                        className='text-red-500 hover:text-red-700 p-2 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-red-200'
-                        title='Eliminar venta'
-                      >
-                        {eliminando === auto.id ? (
-                          <div className='h-5 w-5 border-t-2 border-red-500 border-solid rounded-full animate-spin'></div>
-                        ) : (
-                          <Trash2 size={20} />
-                        )}
-                      </button>
-                    </div>
-
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                      {auto.price && parseFloat(auto.price) > 0 ? (
-                        <div>
-                          <p className='text-base text-gray-500'>
-                            Precio de venta
+                        {auto.price && parseFloat(auto.price) > 0 ? (
+                          <p className='text-xl lg:text-2xl font-bold text-color-primary-admin mt-1'>
+                            {auto.currency === 'ARS' ? '$' : 'US$'}
+                            {parseFloat(auto.price).toLocaleString(
+                              auto.currency === 'ARS' ? 'es-AR' : 'en-US'
+                            )}
                           </p>
-                          {auto.price && parseFloat(auto.price) > 0 ? (
-                            <p className='text-xl font-bold text-color-primary-admin mt-1'>
-                              {auto.currency === 'ARS' ? '$' : 'US$'}
-                              {parseFloat(auto.price).toLocaleString(
-                                auto.currency === 'ARS' ? 'es-AR' : 'en-US'
-                              )}
-                            </p>
-                          ) : (
-                            ''
-                          )}
-                        </div>
-                      ) : (
-                        ''
-                      )}
-
-                      <div>
-                        <p className='text-base text-gray-500'>
-                          Fecha de venta
+                        ) : null}
+                        <p className='text-base text-gray-600 mt-0.5'>
+                          {auto.brand}
                         </p>
-                        <p className='text-lg font-medium text-gray-700 mt-1'>
+                        <p className='text-base text-gray-500 mt-2'>
+                          {auto.year} • Vendido el{' '}
                           {new Date(auto.sellDate).toLocaleDateString('es-AR')}
                         </p>
+                      </div>
+                      <div className='hidden sm:flex items-center'>
+                        <button
+                          onClick={() => confirmarEliminarVenta(auto)}
+                          disabled={eliminando === auto.id}
+                          className='p-2 hover:bg-gray-100 rounded-full transition-colors text-red-500 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-200'
+                          title='Eliminar venta del historial'
+                        >
+                          {eliminando === auto.id ? (
+                            <div className='h-5 w-5 border-t-2 border-red-500 border-solid rounded-full animate-spin' />
+                          ) : (
+                            <Trash2 size={20} />
+                          )}
+                        </button>
                       </div>
                     </div>
                   </div>

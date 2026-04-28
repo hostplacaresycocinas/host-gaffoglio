@@ -29,6 +29,8 @@ interface ImageUploadProps {
     imagesToDelete: string[];
     imageOrder: Array<{ id: string; order: number }>;
   }) => void;
+  /** Llamado cuando el usuario termina de elegir archivos en el diálogo nativo (evita que el modal se cierre por click fantasma en algunos navegadores) */
+  onSelectionComplete?: () => void;
   defaultImages?: Array<{
     id: string;
     imageUrl: string;
@@ -80,14 +82,14 @@ const SortableImage = ({ image, index, onRemove }: SortableImageProps) => {
       }`}
     >
       <div
-        className='absolute top-2 left-2 p-1.5 bg-white/80 rounded-full shadow-sm cursor-grab z-10 hover:bg-white'
+        className='absolute top-2 left-2 p-1.5 bg-white/80 rounded-full shadow-sm cursor-grab z-10 hover:bg-white hidden sm:block'
         {...attributes}
         {...listeners}
         onClick={(e) => e.stopPropagation()}
       >
         <GripVertical size={16} className='text-gray-600' />
       </div>
-      <div className='w-[110px] aspect-[4/3] relative'>
+      <div className='w-full aspect-[4/3] relative'>
         <Image
           src={image.thumbnailUrl}
           alt={`Imagen ${index + 1}`}
@@ -150,14 +152,14 @@ const SortableNewImage = ({
       }`}
     >
       <div
-        className='absolute top-2 left-2 p-1.5 bg-white/80 rounded-full shadow-sm cursor-grab z-10 hover:bg-white'
+        className='absolute top-2 left-2 p-1.5 bg-white/80 rounded-full shadow-sm cursor-grab z-10 hover:bg-white hidden sm:block'
         {...attributes}
         {...listeners}
         onClick={(e) => e.stopPropagation()}
       >
         <GripVertical size={16} className='text-gray-600' />
       </div>
-      <div className='w-[110px] aspect-[4/3] relative'>
+      <div className='w-full aspect-[4/3] relative'>
         <Image
           priority
           src={src}
@@ -168,7 +170,7 @@ const SortableNewImage = ({
       </div>
       <div className='absolute top-2 right-2 flex gap-1'>
         <button
-          className='bg-white rounded-full p-1.5 shadow-sm text-blue-500 hover:text-blue-700 z-10'
+          className='hidden sm:block bg-white rounded-full p-1.5 shadow-sm text-blue-500 hover:text-blue-700 z-10'
           onClick={(e) => {
             e.stopPropagation();
             onEdit();
@@ -194,23 +196,30 @@ const SortableNewImage = ({
   );
 };
 
-// Función para corregir la orientación EXIF
+// Función para corregir la orientación EXIF (con manejo de errores y liberación de memoria)
 const correctImageOrientation = async (file: File): Promise<File> => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
     const img = new window.Image();
+    const cleanup = () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+    img.onerror = () => {
+      cleanup();
+      resolve(file); // ante error, devolver el archivo original
+    };
     img.onload = () => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       if (!ctx) {
+        cleanup();
         resolve(file);
         return;
       }
 
-      // Obtener la orientación EXIF
       const fileWithOrientation = file as FileWithOrientation;
       const orientation = fileWithOrientation.orientation || 1;
 
-      // Ajustar el canvas según la orientación
       if (orientation > 4) {
         canvas.width = img.height;
         canvas.height = img.width;
@@ -219,7 +228,6 @@ const correctImageOrientation = async (file: File): Promise<File> => {
         canvas.height = img.height;
       }
 
-      // Transformar el contexto según la orientación
       switch (orientation) {
         case 2:
           ctx.transform(-1, 0, 0, 1, img.width, 0);
@@ -244,28 +252,33 @@ const correctImageOrientation = async (file: File): Promise<File> => {
           break;
       }
 
-      // Dibujar la imagen
       ctx.drawImage(img, 0, 0);
+      cleanup();
 
-      // Convertir el canvas a blob
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const correctedFile = new File([blob], file.name, {
-            type: file.type,
-            lastModified: file.lastModified,
-          });
-          resolve(correctedFile);
-        } else {
-          resolve(file);
-        }
-      }, file.type);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(
+              new File([blob], file.name, {
+                type: file.type,
+                lastModified: file.lastModified,
+              })
+            );
+          } else {
+            resolve(file);
+          }
+        },
+        file.type,
+        0.92
+      );
     };
-    img.src = URL.createObjectURL(file);
+    img.src = objectUrl;
   });
 };
 
 export function ImageUpload({
   onImagesSelected,
+  onSelectionComplete,
   maxFiles = 10,
   accept = 'image/*',
   defaultImages = [],
@@ -306,42 +319,48 @@ export function ImageUpload({
     );
     if (newFiles.length === 0) return;
 
-    // Corregir la orientación de cada archivo
-    const correctedFiles = await Promise.all(
-      newFiles.map((file) => correctImageOrientation(file))
-    );
+    try {
+      // Corregir la orientación de cada archivo (falla individual no rompe el flujo)
+      const correctedFiles = await Promise.all(
+        newFiles.map((file) =>
+          correctImageOrientation(file).catch(() => file)
+        )
+      );
 
-    // Crear nuevos IDs únicos para las nuevas imágenes
-    const newIds = correctedFiles.map(
-      () => `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
-    );
-    setNewImageIds((prev) => [...prev, ...newIds]);
+      // Crear nuevos IDs únicos para las nuevas imágenes
+      const newIds = correctedFiles.map(
+        () =>
+          `new-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+      );
+      setNewImageIds((prev) => [...prev, ...newIds]);
 
-    // Procesar todas las imágenes directamente
-    const updatedFiles = [...selectedFiles, ...correctedFiles];
-    setSelectedFiles(updatedFiles);
-    onImagesSelected(updatedFiles);
+      const updatedFiles = [...selectedFiles, ...correctedFiles];
+      setSelectedFiles(updatedFiles);
+      onImagesSelected(updatedFiles);
 
-    // Crear previsualizaciones para todas las imágenes usando URL.createObjectURL
-    correctedFiles.forEach((file) => {
-      const url = URL.createObjectURL(file);
-      setPreviewImages((prev) => [...prev, url]);
-    });
-
-    if (e.target) {
-      e.target.value = '';
-    }
-
-    // Notificar cambios si hay un handler
-    if (onImagesUpdate) {
-      onImagesUpdate({
-        newImages: updatedFiles,
-        imagesToDelete,
-        imageOrder: existingImages.map((img, idx) => ({
-          id: img.id,
-          order: idx,
-        })),
+      correctedFiles.forEach((file) => {
+        const url = URL.createObjectURL(file);
+        setPreviewImages((prev) => [...prev, url]);
       });
+
+      if (onImagesUpdate) {
+        onImagesUpdate({
+          newImages: updatedFiles,
+          imagesToDelete,
+          imageOrder: existingImages.map((img, idx) => ({
+            id: img.id,
+            order: idx,
+          })),
+        });
+      }
+      // Avisar al padre que acabamos de elegir archivos (evita cierre del modal por click fantasma)
+      onSelectionComplete?.();
+    } catch (err) {
+      console.error('Error al procesar imágenes:', err);
+    } finally {
+      if (e.target) {
+        e.target.value = '';
+      }
     }
   };
 
@@ -560,7 +579,7 @@ export function ImageUpload({
                 items={existingImages.map((img) => img.id)}
                 strategy={horizontalListSortingStrategy}
               >
-                <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-2 rounded-md'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 p-2 rounded-md'>
                   {existingImages.map((image, index) => (
                     <SortableImage
                       key={image.id}
@@ -597,14 +616,14 @@ export function ImageUpload({
               items={newImageIds}
               strategy={horizontalListSortingStrategy}
             >
-              <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-2 rounded-md'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 p-2 rounded-md'>
                 {/* Área para subir nueva imagen */}
                 {selectedFiles.length +
                   existingImages.length -
                   imagesToDelete.length <
                   maxFiles && (
                   <div
-                    className='border-2 border-dashed border-gray-300 rounded-md w-[110px] aspect-[4/3] flex flex-col items-center justify-center cursor-pointer hover:border-red-400 transition-colors'
+                    className='border-2 border-dashed border-gray-300 rounded-md w-full aspect-[4/3] flex flex-col items-center justify-center cursor-pointer hover:border-red-400 transition-colors'
                     onClick={triggerFileInput}
                   >
                     <Plus className='h-8 w-8 text-gray-400 mb-2' />

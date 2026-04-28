@@ -5,10 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { company } from '@/app/constants/constants';
-import catalogo from '@/data/catalogo.json';
+import { company, API_BASE_URL, TENANT } from '@/app/constants/constants';
 import AutoScroll from 'embla-carousel-auto-scroll';
-import CatalogGalleryBadge from '@/components/CatalogGalleryBadge';
 import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 interface Auto {
@@ -31,6 +29,25 @@ interface Auto {
   descripcion: string;
 }
 
+interface ApiCarResponse {
+  cars: Array<{
+    id: string;
+    brand: string;
+    model: string;
+    year: number;
+    mileage: number;
+    transmission: string | null;
+    fuel: string | null;
+    doors: number | null;
+    description: string | null;
+    currency: string | null;
+    price: number | null;
+    position: number | null;
+    Category?: { name?: string | null } | null;
+    images?: Array<{ thumbnailUrl?: string | null; imageUrl?: string | null }>;
+  }>;
+}
+
 interface CarsHomeProps {
   title: string;
 }
@@ -50,30 +67,44 @@ const CarsHome = ({ title }: CarsHomeProps) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadVehiculos = () => {
+    const loadVehiculos = async () => {
       setLoading(true);
       try {
-        // Obtener los primeros 6 vehículos del catálogo
-        const vehiculosProcesados = catalogo
-          .slice(0, 6) // Máximo 6 vehículos
+        const response = await fetch(
+          `${API_BASE_URL}/api/cars?page=1&limit=12&tenant=${TENANT}`,
+        );
+        if (!response.ok) {
+          throw new Error('No se pudo cargar el listado');
+        }
+
+        const data: ApiCarResponse = await response.json();
+        const vehiculosProcesados = (data.cars ?? [])
+          .sort((a, b) => (b.position ?? 0) - (a.position ?? 0))
+          .slice(0, 6)
           .map((auto) => ({
             id: auto.id,
-            name: auto.name,
-            marca: auto.marca,
-            marcaId: auto.marcaId,
-            ano: auto.ano,
-            kilometraje: auto.kilometraje,
-            precio: auto.precio,
-            categoria: auto.categoria,
-            transmision: auto.transmision,
-            motor: auto.motor,
-            combustible: auto.combustible,
-            puertas: auto.puertas,
-            images: auto.images,
-            descripcion: auto.descripcion,
+            name: auto.model,
+            marca: auto.brand,
+            marcaId: auto.brand.toLowerCase().replace(/\s+/g, '-'),
+            ano: auto.year,
+            kilometraje: auto.mileage ?? 0,
+            precio: {
+              valor: auto.price ?? 0,
+              moneda: auto.currency ?? 'USD',
+            },
+            categoria: auto.Category?.name ?? '',
+            transmision: auto.transmission ?? '',
+            motor: '',
+            combustible: auto.fuel ?? '',
+            puertas: auto.doors ?? 0,
+            images:
+              auto.images
+                ?.map((img) => img.thumbnailUrl || img.imageUrl || '')
+                .filter(Boolean) ?? [],
+            descripcion: auto.description ?? '',
           }));
 
-        setVehiculos(vehiculosProcesados as Auto[]);
+        setVehiculos(vehiculosProcesados);
       } catch (err) {
         console.error('Error al cargar vehículos:', err);
         setError('No se pudieron cargar los vehículos');
@@ -161,16 +192,10 @@ const CarsHome = ({ title }: CarsHomeProps) => {
                         style={{
                           objectPosition: `center ${company.objectCover}`,
                         }}
-                        src={
-                          auto.images[0]
-                            ? `/assets/catalogo/${auto.images[0]}`
-                            : '/assets/placeholder.jpg'
-                        }
+                        src={auto.images[0] || '/assets/placeholder.webp'}
                         alt={`${auto.name}`}
                       />
                     </motion.div>
-                    <CatalogGalleryBadge total={auto.images.length} />
-
                     {/* Overlay con "Ver más" al hacer hover */}
                     <div className='absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
                     <div className='absolute inset-0 opacity-0 group-hover:opacity-100 flex items-center justify-center'>

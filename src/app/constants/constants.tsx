@@ -30,7 +30,8 @@ export const company = {
 };
 
 export const API_BASE_URL = 'https://dealership.agenciagrvity.com';
-export const TENANT = 'test-automotores';
+export const TENANT = 'gaffoglio-automotores';
+export const TENANT_0KM = 'gaffoglio-automotores';
 
 export const metadataCompany = {
   metadataBase: 'https://gaffogliomultimarcas.com.ar/',

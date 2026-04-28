@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
-import { company } from '@/app/constants/constants';
+import { company, API_BASE_URL, TENANT } from '@/app/constants/constants';
 import ArrowIcon from '@/components/icons/ArrowIcon';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -18,8 +18,6 @@ import {
 import CloseIcon from '@/components/icons/CloseIcon';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import catalogo from '@/data/catalogo.json';
-import CatalogGalleryBadge from '@/components/CatalogGalleryBadge';
 
 interface ApiCar {
   id: string;
@@ -56,6 +54,39 @@ interface ApiCar {
   }[];
 }
 
+interface ApiCarsResponse {
+  cars: Array<{
+    id: string;
+    brand: string;
+    model: string;
+    year: number;
+    color: string | null;
+    price: number | null;
+    currency: string | null;
+    description: string | null;
+    categoryId: string;
+    mileage: number | null;
+    transmission: string | null;
+    fuel: string | null;
+    doors: number | null;
+    position: number | null;
+    featured: boolean;
+    favorite: boolean;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+    Category?: {
+      id: string;
+      name: string;
+    };
+    images?: {
+      thumbnailUrl?: string;
+      imageUrl?: string;
+      order?: number;
+    }[];
+  }>;
+}
+
 interface Category {
   id: string;
   name: string;
@@ -67,7 +98,7 @@ const CatalogoPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState(
-    searchParams.get('search') || ''
+    searchParams.get('search') || '',
   );
   const marcaFilter = searchParams.get('marca') || '';
   const categoriaFilter = searchParams.get('categoria') || '';
@@ -75,69 +106,107 @@ const CatalogoPage = () => {
   const searchFilter = searchParams.get('search') || '';
 
   const [cars, setCars] = useState<ApiCar[]>([]);
+  const [allCars, setAllCars] = useState<ApiCar[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [todasLasMarcas, setTodasLasMarcas] = useState<string[]>([]);
   const [categorias, setCategorias] = useState<Category[]>([]);
 
-  // Función para obtener todas las marcas disponibles
-  const fetchMarcas = () => {
-    try {
-      // Obtener marcas únicas del catálogo
-      const marcas = Array.from(
-        new Set(catalogo.map((car) => car.marca))
-      ).sort();
-      setTodasLasMarcas(marcas);
-    } catch (error) {
-      console.error('Error al cargar las marcas:', error);
-    }
-  };
+  const mapApiCar = (car: ApiCarsResponse['cars'][number]): ApiCar => ({
+    id: car.id,
+    brand: car.brand,
+    model: car.model,
+    year: car.year,
+    color: car.color || '',
+    price: {
+      valor: car.price ?? 0,
+      moneda: car.currency ?? 'USD',
+    },
+    description: car.description || '',
+    categoryId: car.categoryId,
+    mileage: car.mileage ?? 0,
+    transmission: car.transmission || '',
+    fuel: car.fuel || '',
+    doors: car.doors ?? 0,
+    position: car.position ?? 0,
+    featured: car.featured,
+    favorite: car.favorite,
+    active: car.active,
+    createdAt: car.createdAt,
+    updatedAt: car.updatedAt,
+    Category: {
+      id: car.Category?.id || car.categoryId,
+      name: car.Category?.name || 'Sin categoría',
+      createdAt: car.createdAt,
+      updatedAt: car.updatedAt,
+    },
+    Images:
+      car.images?.map((img, index) => ({
+        thumbnailUrl:
+          img.thumbnailUrl || img.imageUrl || '/assets/placeholder.webp',
+        imageUrl:
+          img.imageUrl || img.thumbnailUrl || '/assets/placeholder.webp',
+        order: img.order ?? index,
+      })) || [],
+  });
 
-  // Función para obtener las categorías del catálogo
-  const fetchCategories = () => {
+  const fetchCarsFromApi = async () => {
+    setLoading(true);
     try {
-      // Obtener categorías únicas del catálogo
+      const response = await fetch(
+        `${API_BASE_URL}/api/cars?page=1&limit=200&tenant=${TENANT}`,
+      );
+      if (!response.ok) {
+        throw new Error('No se pudo cargar el catálogo');
+      }
+      const data: ApiCarsResponse = await response.json();
+      const mapped = (data.cars ?? [])
+        .map(mapApiCar)
+        .sort((a, b) => (b.position ?? 0) - (a.position ?? 0));
+      setAllCars(mapped);
+      const marcas = Array.from(new Set(mapped.map((car) => car.brand))).sort();
+      setTodasLasMarcas(marcas);
       const categoriasUnicas = Array.from(
-        new Set(catalogo.map((car) => car.categoria))
+        new Set(mapped.map((car) => car.Category.name)),
       );
       const categoriasProcesadas = categoriasUnicas.map((cat) => ({
         id: cat.toLowerCase(),
         name: cat,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       }));
       setCategorias(categoriasProcesadas);
     } catch (error) {
-      console.error('Error al cargar las categorías:', error);
+      console.error('Error al cargar los vehículos:', error);
+      setAllCars([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Función para obtener los autos con filtros
   const fetchCars = (
     page: number,
-    filters?: { search?: string; marca?: string; categoria?: string }
+    filters?: { search?: string; marca?: string; categoria?: string },
   ) => {
-    setLoading(true);
     try {
-      let filteredCars = [...catalogo];
+      let filteredCars = [...allCars];
 
       // Aplicar filtros
       if (filters?.search) {
         const searchTerm = filters.search.toLowerCase();
         filteredCars = filteredCars.filter(
           (car) =>
-            car.name.toLowerCase().includes(searchTerm) ||
-            car.marca.toLowerCase().includes(searchTerm)
+            car.model.toLowerCase().includes(searchTerm) ||
+            car.brand.toLowerCase().includes(searchTerm),
         );
       }
       if (filters?.marca) {
         filteredCars = filteredCars.filter(
-          (car) => car.marca.toLowerCase() === filters.marca?.toLowerCase()
+          (car) => car.brand.toLowerCase() === filters.marca?.toLowerCase(),
         );
       }
       if (filters?.categoria) {
         filteredCars = filteredCars.filter(
-          (car) => car.categoria === filters.categoria
+          (car) => car.Category.name === filters.categoria,
         );
       }
 
@@ -148,66 +217,36 @@ const CatalogoPage = () => {
       const end = start + ITEMS_PER_PAGE;
 
       // Obtener autos de la página actual
-      const paginatedCars: ApiCar[] = filteredCars
-        .slice(start, end)
-        .map((car) => ({
-          id: car.id,
-          brand: car.marca,
-          model: car.name,
-          year: car.ano,
-          color: '',
-          price: {
-            valor: car.precio.valor,
-            moneda: car.precio.moneda,
-          },
-          description: car.descripcion,
-          categoryId: car.categoria,
-          mileage: car.kilometraje,
-          transmission: car.transmision,
-          fuel: car.combustible,
-          doors: car.puertas,
-          position: 0,
-          featured: false,
-          favorite: false,
-          active: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          Category: {
-            id: car.categoria.toLowerCase(),
-            name: car.categoria,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-          Images: car.images.map((img, index) => ({
-            thumbnailUrl: `/assets/catalogo/${img}`,
-            imageUrl: `/assets/catalogo/${img}`,
-            order: index,
-          })),
-        }));
+      const paginatedCars: ApiCar[] = filteredCars.slice(start, end);
 
       setCars(paginatedCars);
       setTotalPages(totalPages);
     } catch (error) {
       console.error('Error al cargar los vehículos:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
   // Efecto para cargar las marcas y categorías al montar el componente
   useEffect(() => {
-    fetchMarcas();
-    fetchCategories();
+    fetchCarsFromApi();
   }, []);
 
   // Efecto para cargar los autos cuando cambian los filtros
   useEffect(() => {
+    if (!allCars.length && !loading) return;
     fetchCars(currentPage, {
       search: searchFilter,
       marca: marcaFilter,
       categoria: categoriaFilter,
     });
-  }, [currentPage, searchFilter, marcaFilter, categoriaFilter]);
+  }, [
+    currentPage,
+    searchFilter,
+    marcaFilter,
+    categoriaFilter,
+    allCars,
+    loading,
+  ]);
 
   // Restaurar la página guardada al recargar
   useEffect(() => {
@@ -227,7 +266,7 @@ const CatalogoPage = () => {
     const handleBeforeUnload = () => {
       sessionStorage.setItem(
         'catalogScrollPosition',
-        window.scrollY.toString()
+        window.scrollY.toString(),
       );
       sessionStorage.setItem('catalogCurrentPage', currentPage.toString());
     };
@@ -487,7 +526,7 @@ const CatalogoPage = () => {
                         onValueChange={(value) => {
                           updateFilters(
                             'categoria',
-                            value === 'all' ? '' : value
+                            value === 'all' ? '' : value,
                           );
                         }}
                       >
@@ -563,7 +602,7 @@ const CatalogoPage = () => {
                         setSearchValue('');
                         router.push('/catalogo');
                       }}
-                      className='flex items-center gap-2 px-3 py-2 rounded-full bg-color-primary hover:bg-color-primary/80 text-black transition-colors'
+                      className={`${company.dark ? 'text-black' : 'text-white'} flex items-center gap-2 px-3 py-2 rounded-full bg-color-primary hover:bg-color-primary/80 transition-colors`}
                     >
                       <span>Limpiar filtros</span>
                       <CloseIcon className='w-4 h-4 stroke-[2]' />
@@ -632,15 +671,13 @@ const CatalogoPage = () => {
                                 }}
                                 src={
                                   car.Images.sort(
-                                    (a, b) => a.order - b.order
+                                    (a, b) => a.order - b.order,
                                   )[0]?.thumbnailUrl ||
                                   '/assets/placeholder.webp'
                                 }
                                 alt={`${car.model}`}
                               />
                             </motion.div>
-                            <CatalogGalleryBadge total={car.Images.length} />
-
                             {/* Overlay con "Ver más" al hacer hover */}
                             <div className='absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
                             <div className='absolute inset-0 opacity-0 group-hover:opacity-100 flex items-center justify-center'>

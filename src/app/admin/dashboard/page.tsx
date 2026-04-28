@@ -8,7 +8,6 @@ import {
   Trash,
   Plus,
   RefreshCw,
-  Star,
   Zap,
   GripVertical,
   Save,
@@ -179,19 +178,19 @@ const SortableAutoCard = ({
       onClick={() => onEdit(auto)}
     >
       <div className='p-4 sm:p-6'>
-        <div className='flex flex-col sm:flex-row gap-4'>
-          <div className='relative w-full sm:w-[155px] aspect-[4/3] md:w-[200px] flex-shrink-0'>
+        <div className='flex flex-col sm:flex-row gap-2 md:gap-4'>
+          <div className='relative w-full sm:w-[155px] sm:min-h-0 aspect-[4/3] md:w-[200px] flex-shrink-0 overflow-hidden rounded-lg self-start'>
             {auto.imagenes && auto.imagenes.length > 0 ? (
               <Image
                 priority
                 src={auto.imagenes[0]}
                 alt={`${auto.modelo}`}
-                width={400}
-                height={320}
+                fill
+                sizes='(max-width: 640px) 100vw, 200px'
                 className='object-cover rounded-lg'
               />
             ) : (
-              <div className='w-full h-full flex items-center justify-center bg-gray-100 rounded-lg'>
+              <div className='absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg'>
                 <span className='text-gray-400'>Sin imagen</span>
               </div>
             )}
@@ -201,7 +200,7 @@ const SortableAutoCard = ({
               </div>
             )}
             <div
-              className='absolute top-2 left-2 p-1.5 bg-white/80 rounded-full shadow-sm cursor-grab z-10 hover:bg-white'
+              className='absolute top-2 left-2 p-1.5 bg-white/80 rounded-full shadow-sm cursor-grab z-10 hover:bg-white hidden sm:block'
               {...attributes}
               {...listeners}
               onClick={(e) => e.stopPropagation()}
@@ -210,10 +209,10 @@ const SortableAutoCard = ({
             </div>
           </div>
 
-          <div className='flex-grow'>
-            <div className='flex justify-between items-start'>
-              <div>
-                <h3 className='text-lg lg:text-xl font-semibold text-gray-900'>
+          <div className='flex-grow min-w-0'>
+            <div className='flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3'>
+              <div className='min-w-0'>
+                <h3 className='text-lg lg:text-xl font-semibold text-gray-900 line-clamp-2'>
                   {auto.modelo}
                 </h3>
                 {auto.precio && auto.precio > 0 ? (
@@ -226,12 +225,15 @@ const SortableAutoCard = ({
                 ) : (
                   ''
                 )}
+                <p className='text-base text-gray-600 mt-0.5'>
+                  {auto.marca}
+                </p>
                 <p className='text-base lg:text-base text-gray-500 mt-2'>
                   {auto.año} • {auto.combustible} •{' '}
                   {auto.kilometraje.toLocaleString('es-AR')} km
                 </p>
               </div>
-              <div className='flex gap-2'>
+              <div className='flex flex-wrap gap-2'>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -274,32 +276,6 @@ const SortableAutoCard = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (auto.active) {
-                      onToggleFavorito(auto.id);
-                    }
-                  }}
-                  className={`p-2 rounded-full transition-all hidden ${
-                    auto.favorito
-                      ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 shadow-sm'
-                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                  } ${!auto.active ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  title={
-                    !auto.active
-                      ? 'Auto pausado, no puede modificarse'
-                      : auto.favorito
-                      ? 'Quitar de favoritos'
-                      : 'Marcar como favorito'
-                  }
-                >
-                  {auto.favorito ? (
-                    <Star size={20} fill='currentColor' />
-                  ) : (
-                    <Star size={20} />
-                  )}
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
                     onEdit(auto);
                   }}
                   className='p-2 hover:bg-gray-100 rounded-full transition-colors'
@@ -315,20 +291,16 @@ const SortableAutoCard = ({
                 >
                   <Trash size={20} className='text-red-500' />
                 </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSell(auto);
+                  }}
+                  className='px-5 py-2.5 rounded-full text-sm font-medium bg-slate-700 text-white hover:bg-slate-800 transition-colors'
+                >
+                  Vender
+                </button>
               </div>
-            </div>
-
-            {/* Botón de vender con posición absoluta */}
-            <div className='mt-4 flex justify-end'>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSell(auto);
-                }}
-                className='bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors'
-              >
-                Vender
-              </button>
             </div>
           </div>
         </div>
@@ -435,7 +407,7 @@ export default function DashboardPage() {
         modelo: car.model,
         año: car.year,
         precio: parseFloat(car.price),
-        currency: car.currency || 'USD',
+        currency: car.currency || 'ARS',
         active: car.active,
         imagenes:
           car.images && car.images.length > 0
@@ -542,7 +514,7 @@ export default function DashboardPage() {
         modelo: car.model,
         año: car.year,
         precio: parseFloat(car.price),
-        currency: car.currency || 'USD',
+        currency: car.currency || 'ARS',
         active: car.active,
         imagenes: car.images.map((img) => img.thumbnailUrl),
         descripcion: car.description,
@@ -1170,6 +1142,11 @@ export default function DashboardPage() {
         }
       );
 
+       if (response.status === 403) {
+        handleUnauthorized();
+        return;
+      }
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error en la respuesta del servidor:', errorData);
@@ -1205,7 +1182,7 @@ export default function DashboardPage() {
             modelo: autoCompleto.model,
             año: autoCompleto.year,
             precio: parseFloat(autoCompleto.price),
-            currency: autoCompleto.currency || 'USD',
+            currency: autoCompleto.currency || 'ARS',
             active: autoCompleto.active,
             imagenes: imagenesOrdenadas.map((img) => img.thumbnailUrl),
             descripcion: autoCompleto.description,
@@ -1493,7 +1470,7 @@ export default function DashboardPage() {
         modelo: car.model,
         año: car.year,
         precio: parseFloat(car.price),
-        currency: car.currency || 'USD',
+        currency: car.currency || 'ARS',
         active: car.active,
         imagenes: car.images.map((img) => img.thumbnailUrl),
         descripcion: car.description,
@@ -1545,7 +1522,7 @@ export default function DashboardPage() {
         modelo: car.model,
         año: car.year,
         precio: parseFloat(car.price),
-        currency: car.currency || 'USD',
+        currency: car.currency || 'ARS',
         active: car.active,
         imagenes: car.images.map((img) => img.thumbnailUrl),
         descripcion: car.description,
@@ -1607,7 +1584,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className='max-w-7xl my-10'>
+    <div className='max-w-7xl my-6 md:my-8 lg:my-10'>
       <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4'>
         <div className='flex flex-col'>
           <h1 className='text-2xl font-semibold text-color-text'>
@@ -1638,22 +1615,12 @@ export default function DashboardPage() {
               Guardar orden
             </button>
           )}
-          <div className='hidden items-center gap-2 text-base'>
-            <div className='bg-blue-100 text-blue-700 px-3 py-1.5 rounded-full'>
-              <span className='font-semibold'>{autosDestacados.length}/10</span>{' '}
-              ingresos
-            </div>
-            <div className='bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-full'>
-              <span className='font-semibold'>{autosFavoritos.length}/10</span>{' '}
-              destacados
-            </div>
-          </div>
           <button
             onClick={() => {
               setSelectedAuto(undefined);
               setIsModalOpen(true);
             }}
-            className='flex items-center gap-2 bg-color-primary-admin hover:bg-color-primary-admin/90 text-white px-4 py-2 rounded-md transition-colors'
+            className='flex items-center gap-2 bg-color-primary-admin hover:bg-color-primary-admin/80 text-white px-4 py-2 rounded-md transition-colors'
           >
             <Plus size={18} />
             Agregar Auto
@@ -1691,7 +1658,7 @@ export default function DashboardPage() {
           )}
           <button
             onClick={executeSearch}
-            className='px-5 py-2.5 bg-color-primary-admin text-white hover:bg-color-primary-admin/90 transition-colors h-full font-medium'
+            className='px-5 py-2.5 bg-color-primary-admin text-white hover:bg-color-primary-admin/80 transition-colors h-full font-medium'
           >
             Buscar
           </button>
@@ -1742,19 +1709,19 @@ export default function DashboardPage() {
                   }}
                 >
                   <div className='p-4 sm:p-6'>
-                    <div className='flex flex-col sm:flex-row gap-4'>
-                      <div className='relative w-full sm:w-[155px] aspect-[4/3] md:w-[200px] flex-shrink-0'>
+                    <div className='flex flex-col sm:flex-row gap-2 md:gap-4'>
+                      <div className='relative w-full sm:w-[155px] sm:min-h-0 aspect-[4/3] md:w-[200px] flex-shrink-0 overflow-hidden rounded-lg self-start'>
                         {auto.imagenes && auto.imagenes.length > 0 ? (
                           <Image
                             priority
                             src={auto.imagenes[0]}
                             alt={`${auto.modelo}`}
-                            width={400}
-                            height={320}
+                            fill
+                            sizes='(max-width: 640px) 100vw, 200px'
                             className='object-cover rounded-lg'
                           />
                         ) : (
-                          <div className='w-full h-full flex items-center justify-center bg-gray-100 rounded-lg'>
+                          <div className='absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg'>
                             <span className='text-gray-400'>Sin imagen</span>
                           </div>
                         )}
@@ -1767,11 +1734,11 @@ export default function DashboardPage() {
                         )}
                       </div>
 
-                      <div className='flex-grow'>
-                        <div className='flex justify-between items-start'>
-                          <div>
-                            <h3 className='text-lg lg:text-xl font-semibold text-gray-900'>
-                              {auto.marca} {auto.modelo}
+                      <div className='flex-grow min-w-0'>
+                        <div className='flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3'>
+                          <div className='min-w-0'>
+                            <h3 className='text-lg lg:text-xl font-semibold text-gray-900 line-clamp-2'>
+                              {auto.modelo}
                             </h3>
                             {auto.precio && auto.precio > 0 ? (
                               <p className='text-xl lg:text-2xl font-bold text-color-primary-admin mt-1'>
@@ -1783,12 +1750,15 @@ export default function DashboardPage() {
                             ) : (
                               ''
                             )}
+                            <p className='text-base text-gray-600 mt-0.5'>
+                              {auto.marca}
+                            </p>
                             <p className='text-base lg:text-base text-gray-500 mt-2'>
                               {auto.año} • {auto.combustible} •{' '}
                               {auto.kilometraje.toLocaleString('es-AR')} km
                             </p>
                           </div>
-                          <div className='flex gap-2'>
+                          <div className='flex flex-wrap gap-2'>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -1835,36 +1805,6 @@ export default function DashboardPage() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                if (auto.active) {
-                                  handleToggleFavorito(auto.id);
-                                }
-                              }}
-                              className={`p-2 rounded-full transition-all hidden ${
-                                auto.favorito
-                                  ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 shadow-sm'
-                                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                              } ${
-                                !auto.active
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : ''
-                              }`}
-                              title={
-                                !auto.active
-                                  ? 'Auto pausado, no puede modificarse'
-                                  : auto.favorito
-                                  ? 'Quitar de favoritos'
-                                  : 'Marcar como favorito'
-                              }
-                            >
-                              {auto.favorito ? (
-                                <Star size={20} fill='currentColor' />
-                              ) : (
-                                <Star size={20} />
-                              )}
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
                                 setSelectedAuto(auto);
                                 setIsModalOpen(true);
                               }}
@@ -1884,20 +1824,16 @@ export default function DashboardPage() {
                             >
                               <Trash size={20} className='text-red-500' />
                             </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSellClick(auto);
+                              }}
+                              className='px-3 py-1.5 rounded-full text-sm font-medium bg-slate-700 text-white hover:bg-slate-800 transition-colors'
+                            >
+                              Vender
+                            </button>
                           </div>
-                        </div>
-
-                        {/* Botón de vender con posición absoluta */}
-                        <div className='mt-4 flex justify-end'>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSellClick(auto);
-                            }}
-                            className='bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors'
-                          >
-                            Vender
-                          </button>
                         </div>
                       </div>
                     </div>

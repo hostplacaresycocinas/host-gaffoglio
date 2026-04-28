@@ -2,7 +2,7 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { company, API_BASE_URL, TENANT } from '@/app/constants/constants';
+import { company, API_BASE_URL, TENANT_0KM } from '@/app/constants/constants';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -41,7 +41,7 @@ const ZeroKmPage = () => {
           `${API_BASE_URL}/api/0km/brands?active=true`,
           {
             headers: {
-              'x-tenant-subdomain': TENANT,
+              'x-tenant-subdomain': TENANT_0KM,
             },
           },
         );

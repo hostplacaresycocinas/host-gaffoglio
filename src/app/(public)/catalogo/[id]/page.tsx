@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ArrowIcon from '@/components/icons/ArrowIcon';
 import WhatsappIcon from '@/components/icons/WhatsappIcon';
-import { company } from '@/app/constants/constants';
+import { company, API_BASE_URL, TENANT } from '@/app/constants/constants';
 import ImageGalleryModal from '@/components/ImageGalleryModal';
 import useEmblaCarousel from 'embla-carousel-react';
 import DropDownIcon from '@/components/icons/DropDownIcon';
@@ -15,7 +15,6 @@ import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ShareMenu from '@/components/ShareMenu';
-import catalogo from '@/data/catalogo.json';
 import CatalogGalleryBadge from '@/components/CatalogGalleryBadge';
 
 interface ApiCar {
@@ -54,8 +53,42 @@ interface ApiCar {
   }[];
 }
 
+interface ApiCarResponse {
+  id: string;
+  brand: string;
+  model: string;
+  year: number;
+  color: string | null;
+  price: number | null;
+  currency: string | null;
+  description: string | null;
+  categoryId: string;
+  mileage: number | null;
+  transmission: string | null;
+  fuel: string | null;
+  doors: number | null;
+  position: number | null;
+  featured: boolean;
+  favorite: boolean;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  Category?: {
+    id: string;
+    name: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+  images?: {
+    thumbnailUrl?: string;
+    imageUrl?: string;
+    order?: number;
+  }[];
+}
+
 export default function AutoDetailPage() {
   const { id } = useParams();
+  const carId = Array.isArray(id) ? id[0] : id;
   const [car, setCar] = useState<ApiCar | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -106,52 +139,56 @@ export default function AutoDetailPage() {
   }, [embla]);
 
   useEffect(() => {
-    const fetchCar = () => {
-      try {
-        const carData = catalogo.find((car) => car.id === id);
+    const mapApiCar = (carData: ApiCarResponse): ApiCar => ({
+      id: carData.id,
+      brand: carData.brand,
+      model: carData.model,
+      year: carData.year,
+      color: carData.color || '',
+      price: {
+        valor: carData.price ?? 0,
+        moneda: carData.currency ?? 'USD',
+      },
+      description: carData.description || '',
+      categoryId: carData.categoryId,
+      mileage: carData.mileage ?? 0,
+      motor: '',
+      transmission: carData.transmission || '',
+      fuel: carData.fuel || '',
+      doors: carData.doors ?? 0,
+      position: carData.position ?? 0,
+      featured: carData.featured,
+      favorite: carData.favorite,
+      active: carData.active,
+      createdAt: carData.createdAt,
+      updatedAt: carData.updatedAt,
+      Category: {
+        id: carData.Category?.id || carData.categoryId,
+        name: carData.Category?.name || 'Sin categoría',
+        createdAt: carData.Category?.createdAt || carData.createdAt,
+        updatedAt: carData.Category?.updatedAt || carData.updatedAt,
+      },
+      Images:
+        carData.images?.map((img, index) => ({
+          thumbnailUrl:
+            img.thumbnailUrl || img.imageUrl || '/assets/placeholder.webp',
+          imageUrl:
+            img.imageUrl || img.thumbnailUrl || '/assets/placeholder.webp',
+          order: img.order ?? index,
+        })) || [],
+    });
 
-        if (!carData) {
+    const fetchCar = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/cars/${carId}?tenant=${TENANT}`,
+        );
+        if (!response.ok) {
           throw new Error('Vehículo no encontrado');
         }
+        const carData: ApiCarResponse = await response.json();
+        const auto = mapApiCar(carData);
 
-        // Transformar los datos al formato esperado
-        const auto = {
-          id: carData.id,
-          brand: carData.marca,
-          model: carData.name,
-          year: carData.ano,
-          color: '',
-          price: {
-            valor: carData.precio.valor,
-            moneda: carData.precio.moneda,
-          },
-          description: carData.descripcion,
-          categoryId: carData.categoria,
-          mileage: carData.kilometraje,
-          motor: carData.motor,
-          transmission: carData.transmision,
-          fuel: carData.combustible,
-          doors: carData.puertas,
-          position: 0,
-          featured: false,
-          favorite: false,
-          active: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          Category: {
-            id: carData.categoria.toLowerCase(),
-            name: carData.categoria,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-          Images: carData.images.map((img, index) => ({
-            thumbnailUrl: `/assets/catalogo/${img}`,
-            imageUrl: `/assets/catalogo/${img}`,
-            order: index,
-          })),
-        };
-
-        // Ordenar las imágenes por el campo order
         const sortedImages = [...auto.Images].sort((a, b) => a.order - b.order);
         setOrderedImages(sortedImages);
         setCar({ ...auto, Images: sortedImages });
@@ -166,10 +203,10 @@ export default function AutoDetailPage() {
       }
     };
 
-    if (id) {
+    if (carId) {
       fetchCar();
     }
-  }, [id]);
+  }, [carId]);
 
   const renderContent = () => {
     if (loading) {

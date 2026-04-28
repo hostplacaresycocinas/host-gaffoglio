@@ -446,7 +446,7 @@ const BrandsView = ({
           )}
           <button
             onClick={onAddBrand}
-            className='flex items-center gap-2 bg-color-primary-admin hover:bg-color-primary-admin/90 text-white px-4 py-2 rounded-md transition-colors'
+            className='flex items-center gap-2 bg-color-primary-admin hover:bg-color-primary-admin/80 text-white px-4 py-2 rounded-md transition-colors'
           >
             <Plus size={18} />
             Agregar Marca
@@ -805,7 +805,7 @@ const SortableModelCard = ({
                     e.stopPropagation();
                     onAddVersion(model);
                   }}
-                  className='px-3 py-1.5 text-sm bg-color-primary-admin hover:bg-color-primary-admin/90 text-white rounded-md transition-colors flex items-center gap-1'
+                  className='px-3 py-1.5 text-sm bg-color-primary-admin hover:bg-color-primary-admin/80 text-white rounded-md transition-colors flex items-center gap-1'
                   title='Agregar versión'
                 >
                   <Plus size={16} />
@@ -1063,7 +1063,7 @@ const ModelsView = ({
           )}
           <button
             onClick={onAddModel}
-            className='flex items-center gap-2 bg-color-primary-admin hover:bg-color-primary-admin/90 text-white px-4 py-2 rounded-md transition-colors'
+            className='flex items-center gap-2 bg-color-primary-admin hover:bg-color-primary-admin/80 text-white px-4 py-2 rounded-md transition-colors'
           >
             <Plus size={18} />
             Agregar Modelo
@@ -1385,7 +1385,7 @@ const VersionsView = ({
           )}
           <button
             onClick={onAddVersion}
-            className='flex items-center gap-2 bg-color-primary-admin hover:bg-color-primary-admin/90 text-white px-4 py-2 rounded-md transition-colors'
+            className='flex items-center gap-2 bg-color-primary-admin hover:bg-color-primary-admin/80 text-white px-4 py-2 rounded-md transition-colors'
           >
             <Plus size={18} />
             Agregar Versión
@@ -1894,7 +1894,7 @@ export default function ZeroKmPage() {
             : deleteType === 'model'
             ? 'Modelo'
             : 'Versión'
-        } eliminado con éxito`,
+        } eliminada con éxito`,
       });
       setDeleteModalOpen(false);
       setItemToDelete(null);

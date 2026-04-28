@@ -5,10 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { company } from '@/app/constants/constants';
-import catalogo from '@/data/catalogo.json';
+import { company, API_BASE_URL, TENANT } from '@/app/constants/constants';
 import AutoScroll from 'embla-carousel-auto-scroll';
-import CatalogGalleryBadge from '@/components/CatalogGalleryBadge';
 
 interface Imagen {
   id: string;
@@ -53,6 +51,30 @@ interface Auto {
   Category: Categoria;
 }
 
+interface ApiRecommendedCar {
+  id: string;
+  brand: string;
+  model: string;
+  year: number;
+  color: string | null;
+  price: number | null;
+  currency: string | null;
+  description: string | null;
+  position: number | null;
+  featured: boolean;
+  favorite: boolean;
+  active: boolean;
+  categoryId: string;
+  mileage: number | null;
+  transmission: string | null;
+  fuel: string | null;
+  doors: number | null;
+  createdAt: string;
+  updatedAt: string;
+  Category?: { id: string; name: string };
+  images?: Array<{ thumbnailUrl?: string; imageUrl?: string; order?: number }>;
+}
+
 interface CarrouselRelatedProps {
   title: string;
   currentCarId: string;
@@ -74,69 +96,55 @@ const CarrouselRelated = ({ title, currentCarId }: CarrouselRelatedProps) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const obtenerRelacionados = () => {
+    const obtenerRelacionados = async () => {
       setCargando(true);
       try {
-        // Encontrar el auto actual y su categoría
-        const autoActual = catalogo.find((auto) => auto.id === currentCarId);
-        if (!autoActual) {
-          throw new Error('Auto no encontrado');
-        }
-
-        // Función para mezclar array aleatoriamente (Fisher-Yates shuffle)
-        const shuffleArray = <T,>(array: T[]): T[] => {
-          const shuffled = [...array];
-          for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-          }
-          return shuffled;
-        };
-
-        // Obtener todos los autos excepto el actual
-        const autosDisponibles = catalogo.filter(
-          (auto) => auto.id !== currentCarId
+        const response = await fetch(
+          `${API_BASE_URL}/api/cars/${currentCarId}/recommended?tenant=${TENANT}`,
         );
-
-        // Mezclar aleatoriamente y tomar máximo 10
-        const autosAleatorios = shuffleArray(autosDisponibles).slice(0, 10);
-
-        const autosRelacionados = autosAleatorios.map((auto) => ({
+        if (!response.ok) {
+          throw new Error('No se pudieron cargar los recomendados');
+        }
+        const data: ApiRecommendedCar[] = await response.json();
+        const autosRelacionados = (data ?? []).map((auto) => ({
           id: auto.id,
-          brand: auto.marca,
-          model: auto.name,
-          year: auto.ano,
-          color: '',
+          brand: auto.brand,
+          model: auto.model,
+          year: auto.year,
+          color: auto.color || '',
           price: {
-            valor: auto.precio.valor,
-            moneda: auto.precio.moneda,
+            valor: auto.price ?? 0,
+            moneda: auto.currency ?? 'USD',
           },
-          description: auto.descripcion,
-          position: 0,
-          featured: false,
-          favorite: false,
-          active: true,
-          categoryId: auto.categoria,
-          mileage: auto.kilometraje,
-          transmission: auto.transmision,
-          fuel: auto.combustible,
-          doors: auto.puertas,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          Images: auto.images.map((img: string, index: number) => ({
-            id: `${auto.id}-img-${index}`,
-            carId: auto.id,
-            imageUrl: `/assets/catalogo/${img}`,
-            thumbnailUrl: `/assets/catalogo/${img}`,
-            order: index,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          })),
+          description: auto.description || '',
+          position: auto.position ?? 0,
+          featured: auto.featured,
+          favorite: auto.favorite,
+          active: auto.active,
+          categoryId: auto.categoryId,
+          mileage: auto.mileage ?? 0,
+          transmission: auto.transmission || '',
+          fuel: auto.fuel || '',
+          doors: auto.doors ?? 0,
+          createdAt: auto.createdAt,
+          updatedAt: auto.updatedAt,
+          Images:
+            auto.images?.map((img, index) => ({
+              id: `${auto.id}-img-${index}`,
+              carId: auto.id,
+              imageUrl:
+                img.imageUrl || img.thumbnailUrl || '/assets/placeholder.webp',
+              thumbnailUrl:
+                img.thumbnailUrl || img.imageUrl || '/assets/placeholder.webp',
+              order: img.order ?? index,
+              createdAt: auto.createdAt,
+              updatedAt: auto.updatedAt,
+            })) ?? [],
           Category: {
-            id: auto.categoria.toLowerCase(),
-            name: auto.categoria,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            id: auto.Category?.id || auto.categoryId,
+            name: auto.Category?.name || 'Sin categoría',
+            createdAt: auto.createdAt,
+            updatedAt: auto.updatedAt,
           },
         }));
 
@@ -265,8 +273,6 @@ const CarrouselRelated = ({ title, currentCarId }: CarrouselRelatedProps) => {
                         alt={`${auto.model}`}
                       />
                     </motion.div>
-                    <CatalogGalleryBadge total={auto.Images.length} />
-
                     {/* Overlay con "Ver más" al hacer hover */}
                     <div className='absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></div>
                     <div className='absolute inset-0 opacity-0 group-hover:opacity-100 flex items-center justify-center'>

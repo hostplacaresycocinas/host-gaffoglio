@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ImageUpload } from './ImageUpload';
 
@@ -45,6 +45,7 @@ const CreateAutoModal = ({
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const lastFileSelectionTimeRef = useRef(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,7 +128,14 @@ const CreateAutoModal = ({
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as='div' className='relative z-50' onClose={onClose}>
+      <Dialog
+        as='div'
+        className='relative z-50'
+        onClose={() => {
+          if (Date.now() - lastFileSelectionTimeRef.current < 500) return;
+          onClose();
+        }}
+      >
         <Transition.Child
           as={Fragment}
           enter='ease-out duration-300'
@@ -141,7 +149,7 @@ const CreateAutoModal = ({
         </Transition.Child>
 
         <div className='fixed inset-0 overflow-y-auto'>
-          <div className='flex min-h-full items-center justify-center p-4 text-center'>
+          <div className='flex min-h-full items-center justify-center p-6 sm:p-4 text-center'>
             <Transition.Child
               as={Fragment}
               enter='ease-out duration-300'
@@ -151,7 +159,7 @@ const CreateAutoModal = ({
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <Dialog.Panel className='w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+              <Dialog.Panel className='w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-4 sm:p-6 text-left align-middle shadow-xl transition-all'>
                 <Dialog.Title
                   as='h3'
                   className='text-lg font-medium leading-6 text-gray-900 mb-4'
@@ -159,11 +167,61 @@ const CreateAutoModal = ({
                   Agregar Nuevo Auto
                 </Dialog.Title>
 
-                <form onSubmit={handleSubmit} className='space-y-4'>
+                <form
+                  onSubmit={handleSubmit}
+                  onKeyDown={(e) => {
+                    const target = e.target as HTMLElement;
+                    const tag = target.tagName.toLowerCase();
+                    if (
+                      tag !== 'input' &&
+                      tag !== 'select' &&
+                      tag !== 'textarea'
+                    )
+                      return;
+                    const form = e.currentTarget;
+                    const focusable = form.querySelectorAll<HTMLElement>(
+                      'input:not([type="hidden"]), select, textarea'
+                    );
+                    const list = Array.from(focusable);
+                    const idx = list.indexOf(target);
+                    if (idx < 0) return;
+
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      if (idx < list.length - 1) {
+                        const next = list[idx + 1];
+                        next.focus();
+                        setTimeout(() => {
+                          next.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                          });
+                        }, 150);
+                      }
+                      return;
+                    }
+
+                    if (e.key === 'Tab') {
+                      e.preventDefault();
+                      const nextIdx = e.shiftKey ? idx - 1 : idx + 1;
+                      if (nextIdx >= 0 && nextIdx < list.length) {
+                        const next = list[nextIdx];
+                        next.focus();
+                        setTimeout(() => {
+                          next.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                          });
+                        }, 150);
+                      }
+                    }
+                  }}
+                  className='space-y-4'
+                >
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     <div>
                       <label className='block text-base font-medium text-gray-700'>
-                        Modelo
+                        Título
                       </label>
                       <input
                         type='text'
@@ -175,7 +233,7 @@ const CreateAutoModal = ({
                           }))
                         }
                         className={inputStyles}
-                        placeholder='Ej: Focus, Cruze, Corolla'
+                        placeholder='Ej: Toyota Yaris, Ford Focus'
                         required
                       />
                     </div>
@@ -351,8 +409,6 @@ const CreateAutoModal = ({
                         <option value='3'>3 puertas</option>
                         <option value='4'>4 puertas</option>
                         <option value='5'>5 puertas</option>
-                        <option value='6'>6 puertas</option>
-                        <option value='7'>7 puertas</option>
                       </select>
                     </div>
 
@@ -404,6 +460,9 @@ const CreateAutoModal = ({
                     </label>
                     <ImageUpload
                       onImagesSelected={handleImagesSelected}
+                      onSelectionComplete={() => {
+                        lastFileSelectionTimeRef.current = Date.now();
+                      }}
                       maxFiles={20}
                       accept='image/*'
                     />

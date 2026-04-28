@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { API_BASE_URL, TENANT } from '@/app/constants/constants';
+import { API_BASE_URL, TENANT_0KM } from '@/app/constants/constants';
 import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 interface Brand {
@@ -39,7 +39,7 @@ const BrandsSection = () => {
           `${API_BASE_URL}/api/0km/brands?active=true`,
           {
             headers: {
-              'x-tenant-subdomain': TENANT,
+              'x-tenant-subdomain': TENANT_0KM,
             },
           },
         );
