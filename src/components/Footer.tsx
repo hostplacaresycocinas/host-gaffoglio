@@ -151,6 +151,7 @@ const Footer = () => {
                 </div>
 
                 <div className='flex flex-col gap-3'>
+
                   {/* Direcciones */}
                   <div className='flex items-start gap-3'>
                     <LocationIcon className='w-6 h-6 text-white/60 mt-0.5 flex-shrink-0' />

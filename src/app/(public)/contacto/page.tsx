@@ -63,14 +63,14 @@ const ContactoPage = () => {
         aria-labelledby='contacto-heading'
       >
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='grid md:grid-cols-2 gap-6 lg:gap-8 items-start'>
-            {/* Horarios — día por día */}
+          <div className='grid lg:grid-cols-[1.1fr_0.9fr] gap-6 lg:gap-8 items-start'>
+            {/* Horarios — formato lista editorial */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4 }}
-              className='relative overflow-hidden p-8 md:p-10 lg:p-12 rounded-2xl bg-white/5 backdrop-blur-md border border-white/15'
+              className='order-2 relative overflow-hidden rounded-2xl border border-white/15 bg-white/5 backdrop-blur-md p-6 md:p-7'
             >
               <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-color-primary/50 to-transparent' />
               <div className='flex items-center gap-3 mb-6'>
@@ -84,25 +84,33 @@ const ContactoPage = () => {
                   Horarios de atención
                 </h2>
               </div>
-              <ul className='divide-y divide-white/10' role='list'>
+              <div className='space-y-2.5' role='list'>
                 {(company.openHours ?? []).map((line, index) => (
-                  <li key={index} className='py-3 md:py-4'>
-                    <span className='text-sm sm:text-base text-white/80'>
+                  <div
+                    key={index}
+                    className='flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5'
+                  >
+                    <span
+                      className='mt-1 h-2 w-2 rounded-full bg-color-primary-light/80'
+                      aria-hidden
+                    />
+                    <span className='text-sm sm:text-base text-white/80 leading-relaxed'>
                       {line}
                     </span>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </motion.div>
 
-            {/* Redes */}
+            {/* Redes — formato lista compacta */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.05 }}
-              className='p-2 md:p-0'
+              className='order-1 relative overflow-hidden rounded-2xl border border-white/15 bg-white/5 backdrop-blur-md p-6 md:p-7'
             >
+              <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-color-primary/50 to-transparent' />
               <div className='flex items-center gap-3 mb-5 md:mb-6'>
                 <span className='flex w-11 h-11 items-center justify-center rounded-xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light'>
                   <InstagramIcon className='w-6 h-6' aria-hidden />
@@ -112,21 +120,26 @@ const ContactoPage = () => {
                 </h3>
               </div>
 
-              <div className='grid sm:grid-cols-2 gap-4'>
+              <div className='space-y-3'>
                 <a
                   href={`https://www.instagram.com/${company.instagram}/`}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='group flex flex-col items-center text-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-color-primary/40 px-6 py-7 md:px-8 md:py-8 transition-colors'
+                  className='group flex items-center justify-between gap-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-color-primary/40 px-4 py-3.5 transition-colors'
                 >
-                  <span className='flex w-14 h-14 items-center justify-center rounded-2xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light mb-4'>
-                    <InstagramIcon className='w-7 h-7' aria-hidden />
+                  <span className='flex items-center gap-3'>
+                    <span className='flex w-11 h-11 items-center justify-center rounded-xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light'>
+                      <InstagramIcon className='w-6 h-6' aria-hidden />
+                    </span>
+                    <span>
+                      <p className='text-white font-semibold text-base leading-none mb-1'>
+                        Instagram
+                      </p>
+                      <span className='text-white/75 text-sm'>@{company.instagram}</span>
+                    </span>
                   </span>
-                  <p className='text-white font-semibold text-base md:text-lg leading-none mb-2'>
-                    Instagram
-                  </p>
-                  <span className='text-white/80 text-sm font-semibold tracking-wide'>
-                    Ver perfil
+                  <span className='text-white/65 text-xs uppercase tracking-[0.2em]'>
+                    Abrir
                   </span>
                 </a>
 
@@ -134,16 +147,21 @@ const ContactoPage = () => {
                   href={whatsappUrl}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='group flex flex-col items-center text-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-color-primary/40 px-6 py-7 md:px-8 md:py-8 transition-colors'
+                  className='group flex items-center justify-between gap-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-color-primary/40 px-4 py-3.5 transition-colors'
                 >
-                  <span className='flex w-14 h-14 items-center justify-center rounded-2xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light mb-4'>
-                    <WhatsappFillIcon className='w-7 h-7' aria-hidden />
+                  <span className='flex items-center gap-3'>
+                    <span className='flex w-11 h-11 items-center justify-center rounded-xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light'>
+                      <WhatsappFillIcon className='w-6 h-6' aria-hidden />
+                    </span>
+                    <span>
+                      <p className='text-white font-semibold text-base leading-none mb-1'>
+                        WhatsApp
+                      </p>
+                      <span className='text-white/75 text-sm'>{whatsappLabel}</span>
+                    </span>
                   </span>
-                  <p className='text-white font-semibold text-base md:text-lg leading-none mb-2'>
-                    WhatsApp
-                  </p>
-                  <span className='text-white/80 text-sm font-semibold tracking-wide'>
-                    Abrir chat
+                  <span className='text-white/65 text-xs uppercase tracking-[0.2em]'>
+                    Chat
                   </span>
                 </a>
 
@@ -152,16 +170,21 @@ const ContactoPage = () => {
                     href={company.facebook}
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='group flex flex-col items-center text-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-color-primary/40 px-6 py-7 md:px-8 md:py-8 transition-colors'
+                    className='group flex items-center justify-between gap-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-color-primary/40 px-4 py-3.5 transition-colors'
                   >
-                    <span className='flex w-14 h-14 items-center justify-center rounded-2xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light mb-4'>
-                      <FacebookIcon className='w-7 h-7' aria-hidden />
+                    <span className='flex items-center gap-3'>
+                      <span className='flex w-11 h-11 items-center justify-center rounded-xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light'>
+                        <FacebookIcon className='w-6 h-6' aria-hidden />
+                      </span>
+                      <span>
+                        <p className='text-white font-semibold text-base leading-none mb-1'>
+                          Facebook
+                        </p>
+                        <span className='text-white/75 text-sm'>Seguinos</span>
+                      </span>
                     </span>
-                    <p className='text-white font-semibold text-base md:text-lg leading-none mb-2'>
-                      Facebook
-                    </p>
-                    <span className='text-white/80 text-sm font-semibold tracking-wide'>
-                      Ver página
+                    <span className='text-white/65 text-xs uppercase tracking-[0.2em]'>
+                      Abrir
                     </span>
                   </a>
                 )}
@@ -169,16 +192,21 @@ const ContactoPage = () => {
                 {company.email && (
                   <a
                     href={`mailto:${company.email}`}
-                    className='group flex flex-col items-center text-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-color-primary/40 px-6 py-7 md:px-8 md:py-8 transition-colors'
+                    className='group flex items-center justify-between gap-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 hover:border-color-primary/40 px-4 py-3.5 transition-colors'
                   >
-                    <span className='flex w-14 h-14 items-center justify-center rounded-2xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light mb-4'>
-                      <EmailFillIcon className='w-7 h-7' aria-hidden />
+                    <span className='flex items-center gap-3'>
+                      <span className='flex w-11 h-11 items-center justify-center rounded-xl bg-color-primary/15 border border-color-primary/35 text-color-primary-light'>
+                        <EmailFillIcon className='w-6 h-6' aria-hidden />
+                      </span>
+                      <span>
+                        <p className='text-white font-semibold text-base leading-none mb-1'>
+                          Email
+                        </p>
+                        <span className='text-white/75 text-sm'>{company.email}</span>
+                      </span>
                     </span>
-                    <p className='text-white font-semibold text-base md:text-lg leading-none mb-2'>
-                      Email
-                    </p>
-                    <span className='text-white/80 text-sm font-semibold tracking-wide'>
-                      Enviar correo
+                    <span className='text-white/65 text-xs uppercase tracking-[0.2em]'>
+                      Enviar
                     </span>
                   </a>
                 )}
