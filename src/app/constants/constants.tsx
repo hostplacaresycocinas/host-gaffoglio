@@ -98,11 +98,16 @@ export const navigation = [
   },
   {
     id: '3',
+    title: 'Clientes',
+    url: '/clientes',
+  },
+  {
+    id: '4',
     title: 'Nosotros',
     url: '/nosotros',
   },
   {
-    id: '4',
+    id: '5',
     title: 'Contacto',
     url: '/contacto',
     button: true,

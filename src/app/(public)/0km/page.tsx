@@ -11,6 +11,7 @@ import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 interface Brand {
   id: string;
+  position?: number;
   name: string;
   description?: string;
   imageUrl?: string;
@@ -50,7 +51,10 @@ const ZeroKmPage = () => {
         }
 
         const data: Brand[] = await response.json();
-        setBrands(data);
+        const ordered = [...data].sort(
+          (a, b) => (b.position ?? 0) - (a.position ?? 0),
+        );
+        setBrands(ordered);
       } catch (error) {
         console.error('Error al cargar las marcas:', error);
       } finally {
@@ -70,7 +74,7 @@ const ZeroKmPage = () => {
           {/* Imagen de fondo con overlay */}
           <div className='absolute inset-0 z-0'>
             <Image
-              src='/assets/contacto/contacto-banner.webp'
+              src='/assets/0km/0km-banner.webp'
               alt={`Vehículos 0km de ${company.name}`}
               fill
               className='object-cover'
@@ -102,7 +106,7 @@ const ZeroKmPage = () => {
                 <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-color-primary'></div>
               </div>
             ) : brands.length > 0 ? (
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8'>
+              <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6 lg:gap-8'>
                 {brands.map((brand) => {
                   const brandSlug = normalizeToSlug(brand.name);
                   return (
@@ -110,80 +114,44 @@ const ZeroKmPage = () => {
                       key={brand.id}
                       initial={{ opacity: 0, y: 30 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                      viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-                      className='group relative'
+                      transition={{ duration: 0.4 }}
+                      viewport={{ once: true, margin: '0px 0px -50px 0px' }}
+                      className='group'
                     >
-                      <Link href={`/0km/${brandSlug}`} className='block h-full'>
-                        <div className='relative overflow-hidden rounded-2xl h-full bg-white/5 backdrop-blur-md border border-white/15 hover:border-white/25 transition-colors'>
-                          <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent' />
-                          {/* Imagen de fondo */}
-                          <div className='relative w-full h-56 md:h-64 rounded-2xl overflow-hidden'>
-                            {brand.imageUrl || brand.thumbnailUrl ? (
-                              <Image
-                                src={brand.imageUrl || brand.thumbnailUrl || ''}
-                                alt={brand.name}
-                                fill
-                                className='object-contain p-8 lg:p-10'
-                                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-                              />
-                            ) : (
-                              <div className='w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center'>
-                                <span className='text-4xl font-bold text-white/50'>
-                                  {brand.name.charAt(0).toUpperCase()}
-                                </span>
-                              </div>
-                            )}
-                            {/* Gradiente overlay */}
-                            <div className='absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/70'></div>
-                          </div>
+                      <Link
+                        href={`/0km/${brandSlug}`}
+                        className='relative flex flex-col items-center justify-center p-4 md:p-6 rounded-lg border border-white/15 bg-white/5 backdrop-blur-md transition-all duration-300 hover:border-color-primary/45 hover:bg-white/10 group'
+                      >
+                        <div className='absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent' />
 
-                          {/* Contenido debajo de la imagen */}
-                          <div className='relative p-6 lg:p-7'>
-                            <h3 className='text-white/90 text-xl md:text-2xl font-bold text-center mb-1'>
-                              {brand.name}
-                            </h3>
-
-                            {/* Cantidad de modelos */}
-                            {brand.models && brand.models.length > 0 && (
-                              <p className='text-white/70 text-center text-sm mb-4'>
-                                {brand.models.length}{' '}
-                                {brand.models.length === 1
-                                  ? 'modelo'
-                                  : 'modelos'}
-                              </p>
-                            )}
-
-                            {/* Descripción */}
-                            {brand.description && (
-                              <p className='text-white/75 text-center text-sm leading-relaxed mb-5 line-clamp-2'>
-                                {brand.description}
-                              </p>
-                            )}
-
-                            {/* Botón */}
-                            <div className='flex justify-center'>
-                              <span
-                                className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-color-primary font-semibold text-sm md:text-base transition-colors group-hover:bg-color-primary-dark ${company.dark ? 'text-color-title' : 'text-color-title-light'}`}
-                              >
-                                Ver modelos
-                                <svg
-                                  className='w-5 h-5'
-                                  fill='none'
-                                  stroke='currentColor'
-                                  viewBox='0 0 24 24'
-                                >
-                                  <path
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    strokeWidth={2}
-                                    d='M9 5l7 7-7 7'
-                                  />
-                                </svg>
+                        <div className='relative w-full h-20 md:h-24 lg:h-28 mb-3 md:mb-4 flex items-center justify-center'>
+                          {brand.imageUrl || brand.thumbnailUrl ? (
+                            <Image
+                              src={brand.imageUrl || brand.thumbnailUrl || ''}
+                              alt={brand.name}
+                              fill
+                              className='object-contain object-center transition-transform duration-300 group-hover:scale-105'
+                              sizes='(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw'
+                            />
+                          ) : (
+                            <div className='w-full h-full flex items-center justify-center'>
+                              <span className='text-2xl md:text-3xl font-semibold text-color-text-light/60'>
+                                {brand.name.charAt(0).toUpperCase()}
                               </span>
                             </div>
-                          </div>
+                          )}
                         </div>
+
+                        <h3 className='text-sm md:text-base font-medium text-color-title-light text-center group-hover:text-color-primary transition-colors duration-300'>
+                          {brand.name}
+                        </h3>
+
+                        {!!brand.models?.length && (
+                          <p className='mt-1.5 text-[10px] md:text-xs tracking-[0.18em] uppercase text-white/55'>
+                            {brand.models.length}{' '}
+                            {brand.models.length === 1 ? 'modelo' : 'modelos'}
+                          </p>
+                        )}
                       </Link>
                     </motion.div>
                   );

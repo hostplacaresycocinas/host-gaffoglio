@@ -49,13 +49,13 @@ const NosotrosPage = () => {
           <div className='grid lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-16 items-center justify-center'>
             {/* Imagen: los inicios */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
               className='relative'
             >
-              <div className='mx-auto relative max-w-md lg:max-w-full rounded-xl md:rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] border border-white/10 group'>
+              <div className='mx-auto relative max-w-md lg:max-w-full rounded-lg md:rounded-xl overflow-hidden shadow-2xl aspect-[4/3] border border-white/10 group'>
                 <Image
                   src='/assets/nosotros/nosotros-1.webp'
                   alt={`Primer local de ${company.name}`}
@@ -63,15 +63,14 @@ const NosotrosPage = () => {
                   className='object-cover w-full h-full'
                 />
               </div>
-              <div className='absolute -bottom-4 -right-4 w-24 h-24 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full -z-10 hidden lg:block'></div>
             </motion.div>
 
             {/* Texto: los inicios */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
               className='max-w-lg flex flex-col items-center lg:items-start justify-center text-center lg:text-left'
             >
               <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight mb-5 max-w-xl [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'>
@@ -98,10 +97,10 @@ const NosotrosPage = () => {
           <div className='grid lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-16 items-center justify-center'>
             {/* Texto: hoy */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
               className='order-2 lg:order-1 max-w-lg flex flex-col items-center lg:items-start justify-center text-center lg:text-left'
             >
               <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight mb-5 max-w-xl [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'>
@@ -122,13 +121,13 @@ const NosotrosPage = () => {
 
             {/* Imagen: hoy */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
               className='order-1 lg:order-2 relative'
             >
-              <div className='mx-auto relative max-w-md lg:max-w-full rounded-xl md:rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] border border-white/10 group'>
+              <div className='mx-auto relative max-w-md lg:max-w-full rounded-lg md:rounded-xl overflow-hidden shadow-2xl aspect-[4/3] border border-white/10 group'>
                 <Image
                   src='/assets/nosotros/nosotros-2.webp'
                   alt={`Segunda sede de ${company.name}`}
@@ -136,7 +135,6 @@ const NosotrosPage = () => {
                   className='object-cover w-full h-full'
                 />
               </div>
-              <div className='absolute -bottom-4 -left-4 w-24 h-24 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full -z-10 hidden lg:block'></div>
             </motion.div>
           </div>
         </div>
@@ -149,8 +147,8 @@ const NosotrosPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true, margin: '0px 0px -100px 0px' }}
             className='text-center mb-5 md:mb-8'
           >
             <h2 className='text-white/90 text-2xl sm:text-3xl md:text-4xl leading-tight mb-2 md:mb-3 [text-shadow:0px_0px_10px_rgba(0,0,0,0.6)]'>
@@ -167,10 +165,10 @@ const NosotrosPage = () => {
           <div className='grid md:grid-cols-3 gap-5 lg:gap-6'>
             {/* Valor 1 - Excelencia (acento verde) */}
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
               className='relative'
             >
               <div className='bg-white/5 backdrop-blur-md relative overflow-hidden rounded-xl h-full border border-white/15'>
@@ -208,10 +206,10 @@ const NosotrosPage = () => {
 
             {/* Valor 2 - Confianza */}
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
               className='relative'
             >
               <div className='bg-white/5 backdrop-blur-md relative overflow-hidden rounded-xl h-full border border-white/15'>
@@ -249,10 +247,10 @@ const NosotrosPage = () => {
 
             {/* Valor 3 - Innovación */}
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true, margin: '0px 0px -100px 0px' }}
               className='relative'
             >
               <div className='bg-white/5 backdrop-blur-md relative overflow-hidden rounded-xl h-full border border-white/15'>

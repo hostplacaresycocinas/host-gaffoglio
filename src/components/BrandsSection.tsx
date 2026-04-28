@@ -9,6 +9,7 @@ import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 interface Brand {
   id: string;
+  position?: number;
   name: string;
   description?: string;
   imageUrl?: string;
@@ -40,7 +41,7 @@ const BrandsSection = () => {
             headers: {
               'x-tenant-subdomain': TENANT,
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -48,7 +49,10 @@ const BrandsSection = () => {
         }
 
         const data: Brand[] = await response.json();
-        setBrands(data);
+        const ordered = [...data].sort(
+          (a, b) => (b.position ?? 0) - (a.position ?? 0),
+        );
+        setBrands(ordered);
       } catch (error) {
         console.error('Error al cargar las marcas:', error);
       } finally {
@@ -110,8 +114,10 @@ const BrandsSection = () => {
               >
                 <Link
                   href={`/0km/${brandSlug}`}
-                  className='flex flex-col items-center justify-center p-4 md:p-6 rounded-lg border border-white/10 hover:border-color-primary/50 bg-color-bg-secondary/50 hover:bg-color-bg-secondary transition-all duration-300 group'
+                  className='relative flex flex-col items-center justify-center p-4 md:p-6 rounded-lg border border-white/15 bg-white/5 backdrop-blur-md transition-all duration-300 hover:border-color-primary/45 hover:bg-white/10 group'
                 >
+                  <div className='absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent' />
+
                   {/* Logo */}
                   <div className='relative w-full h-20 md:h-24 lg:h-28 mb-3 md:mb-4 flex items-center justify-center'>
                     {brand.imageUrl || brand.thumbnailUrl ? (
@@ -119,7 +125,7 @@ const BrandsSection = () => {
                         src={brand.imageUrl || brand.thumbnailUrl || ''}
                         alt={brand.name}
                         fill
-                        className='object-contain object-center group-hover:scale-105 transition-transform duration-300'
+                        className='object-contain object-center transition-transform duration-300 group-hover:scale-105'
                         sizes='(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw'
                       />
                     ) : (
@@ -135,6 +141,12 @@ const BrandsSection = () => {
                   <h3 className='text-sm md:text-base font-medium text-color-title-light text-center group-hover:text-color-primary transition-colors duration-300'>
                     {brand.name}
                   </h3>
+
+                  {!!brand.models?.length && (
+                    <p className='mt-1.5 text-[10px] md:text-xs tracking-[0.18em] uppercase text-white/55'>
+                      {brand.models.length} modelos
+                    </p>
+                  )}
                 </Link>
               </motion.div>
             );

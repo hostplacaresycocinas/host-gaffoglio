@@ -332,9 +332,9 @@ export default function ZeroKmModelDetailPage() {
           </div>
         </div>
 
-        <div className='flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8 w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-0'>
+        <div className='flex flex-col lg:flex-row lg:items-start gap-4 md:gap-6 lg:gap-8 w-full max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-0'>
           {/* Columna izquierda - Galería de imágenes */}
-          <div className='w-full lg:w-1/2 lg:sticky lg:top-20 lg:self-start'>
+          <div className='w-full lg:w-1/2 lg:sticky lg:top-28 lg:self-start'>
             <div className='relative mb-3'>
               {/* Botones de navegación */}
               {currentImages.length > 1 && (
@@ -729,7 +729,7 @@ export default function ZeroKmModelDetailPage() {
   return (
     <>
       <Header />
-      <div className='relative w-full max-w-full overflow-x-hidden'>{renderContent()}</div>
+      <div className='relative w-full max-w-full'>{renderContent()}</div>
       <Footer />
     </>
   );

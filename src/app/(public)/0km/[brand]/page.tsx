@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SectionTitleItaly } from '@/components/SectionTitleItaly';
 
 interface Brand {
   id: string;
@@ -60,7 +61,7 @@ const ZeroKmBrandPage = () => {
           headers: {
             'x-tenant-subdomain': TENANT,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -100,7 +101,7 @@ const ZeroKmBrandPage = () => {
             headers: {
               'x-tenant-subdomain': TENANT,
             },
-          }
+          },
         );
 
         if (modelsResponse.ok) {
@@ -123,38 +124,38 @@ const ZeroKmBrandPage = () => {
       <div className='relative'>
         {/* Hero Section tipo título con logo y nombre */}
         {brand && (
-          <section className='relative bg-white/5 backdrop-blur-sm border-b border-white/10 py-6 md:py-8'>
+          <section className='relative py-8 md:py-10 lg:py-12'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-              <div className='flex items-center justify-center gap-4 md:gap-6 lg:gap-8'>
-                {/* Logo de la marca */}
-                {brand.imageUrl || brand.thumbnailUrl ? (
-                  <div className='relative w-24 h-16 md:w-32 md:h-20 lg:w-40 lg:h-24 flex-shrink-0'>
-                    <Image
-                      src={brand.imageUrl || brand.thumbnailUrl || ''}
-                      alt={`Logo de ${brand.name}`}
-                      fill
-                      className='object-contain object-right'
-                      priority
-                    />
-                  </div>
-                ) : (
-                  <div className='w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 flex-shrink-0 bg-white/10 rounded-lg flex items-center justify-center border border-white/20'>
-                    <span className='text-2xl md:text-3xl lg:text-4xl font-bold text-white/60'>
-                      {brand.name?.charAt(0).toUpperCase() || 'M'}
-                    </span>
-                  </div>
-                )}
-
-                {/* Nombre de la marca */}
-                <div className='flex-1'>
-                  <h1 className='uppercase text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-color-primary-light mb-1'>
-                    {brand.name} 0km
-                  </h1>
-                  <p className='text-sm md:text-base lg:text-lg text-white/70 font-medium'>
-                    Vehículos disponibles
-                  </p>
-                </div>
-              </div>
+              <SectionTitleItaly
+                title={
+                  <span className='inline-flex items-center justify-center gap-3 md:gap-4'>
+                    {brand.imageUrl || brand.thumbnailUrl ? (
+                      <span className='relative w-16 h-11 md:w-20 md:h-14 lg:w-24 lg:h-16 flex-shrink-0'>
+                        <Image
+                          src={brand.imageUrl || brand.thumbnailUrl || ''}
+                          alt={`Logo de ${brand.name}`}
+                          fill
+                          className='object-contain object-right'
+                          priority
+                        />
+                      </span>
+                    ) : (
+                      <span className='w-11 h-11 md:w-12 md:h-12 lg:w-14 lg:h-14 flex-shrink-0 bg-white/10 rounded-lg flex items-center justify-center border border-white/20'>
+                        <span className='text-xl md:text-2xl font-bold text-white/60'>
+                          {brand.name?.charAt(0).toUpperCase() || 'M'}
+                        </span>
+                      </span>
+                    )}
+                    <span>{brand.name}</span>
+                  </span>
+                }
+                as='h1'
+                className='!mb-0'
+                titleClassName='uppercase text-color-primary-light'
+                subtitle='Modelos 0km'
+                subtitleVariant='section'
+                subtitleClassName='!text-white/70 !text-sm md:!text-base lg:!text-lg !font-medium'
+              />
             </div>
           </section>
         )}
@@ -175,7 +176,7 @@ const ZeroKmBrandPage = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12 mt-10 min-h-[600px] place-content-start'
+                    className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 lg:gap-7 mt-8 md:mt-10 min-h-[600px] place-content-start'
                   >
                     {models.map((model) => {
                       const modelSlug = normalizeToSlug(model.name);
@@ -192,13 +193,16 @@ const ZeroKmBrandPage = () => {
                             href={`/0km/${brandSlug}/${modelSlug}`}
                             className='block h-full'
                           >
-                            <div className='h-full flex flex-col'>
-                              {/* Imagen */}
-                              <div className='relative w-full h-48 md:h-56 lg:h-60 flex items-center justify-center'>
+                            <div className='h-full overflow-hidden'>
+                              {/* Imagen limpia, sin card/borde */}
+                              <div className='relative w-full h-52 md:h-60 lg:h-64 flex items-center justify-center'>
                                 <motion.div
                                   initial={{ opacity: 0 }}
                                   animate={{ opacity: 1 }}
-                                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                                  transition={{
+                                    duration: 0.5,
+                                    ease: 'easeOut',
+                                  }}
                                   className='w-full h-full flex items-center justify-center'
                                 >
                                   {model.images && model.images.length > 0 ? (
@@ -206,7 +210,7 @@ const ZeroKmBrandPage = () => {
                                       priority
                                       width={520}
                                       height={380}
-                                      className='object-contain w-full h-full p-6'
+                                      className='object-contain w-full h-full p-6 md:p-7'
                                       src={
                                         model.images[0].thumbnailUrl ||
                                         model.images[0].imageUrl
@@ -214,32 +218,32 @@ const ZeroKmBrandPage = () => {
                                       alt={model.name}
                                     />
                                   ) : (
-                                    <div className='w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center rounded-lg'>
+                                    <div className='w-full h-full flex items-center justify-center'>
                                       <span className='text-2xl font-bold text-white/50'>
                                         {model.name.charAt(0).toUpperCase()}
                                       </span>
                                     </div>
                                   )}
                                 </motion.div>
-                                <div className='absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/35 pointer-events-none' />
                               </div>
 
-                              {/* Contenido */}
-                              <div className='p-4 pt-5'>
-                                <h3 className='text-center text-white/90 text-lg md:text-xl font-semibold uppercase tracking-tight mb-4'>
+                              {/* Título + botón */}
+                              <div className='relative p-4 md:p-5 rounded-b-lg overflow-hidden'>
+                                <div className='absolute inset-0 z-0 bg-gradient-to-t from-neutral-800 via-neutral-800/45 to-transparent opacity-100 transition-opacity duration-300 ease-out pointer-events-none' />
+                                <div className='absolute inset-0 z-0 bg-gradient-to-t from-neutral-800 via-neutral-800/70 to-transparent opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 pointer-events-none' />
+                                <h3 className='relative z-10 text-center text-white/90 text-lg md:text-xl font-semibold uppercase tracking-tight mb-3'>
                                   {model.name}
                                 </h3>
 
                                 {/* Botón */}
-                                <div className='flex justify-center'>
-                                  <span className='inline-flex items-center justify-center w-full px-6 py-3 rounded-xl bg-white text-black font-semibold text-sm md:text-base transition-colors group-hover:bg-white/85'>
-                                    Ver más
+                                <div className='relative z-10 flex justify-center'>
+                                  <span className='inline-flex items-center justify-center w-full px-6 py-3 rounded-xl bg-color-primary text-color-title-light font-semibold text-sm md:text-base transition-colors group-hover:bg-color-primary-dark'>
+                                    Ver modelo
                                   </span>
                                 </div>
                               </div>
                             </div>
                           </Link>
-
                         </motion.div>
                       );
                     })}

@@ -13,6 +13,17 @@ import WhatsappFillIcon from './icons/WhatsappFillIcon';
 import EmailFillIcon from './icons/EmailFillIcon';
 import OnlymotorsLogo from './icons/OnlymotorsLogo';
 
+const italianLineMask = {
+  WebkitMaskImage:
+    'linear-gradient(90deg, transparent 0%, #000 5%, #000 82%, transparent 100%)',
+  WebkitMaskSize: '100% 100%',
+  WebkitMaskRepeat: 'no-repeat',
+  maskImage:
+    'linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%)',
+  maskSize: '100% 100%',
+  maskRepeat: 'no-repeat',
+} as const;
+
 const Footer = () => {
   return (
     <div className='relative'>
@@ -91,11 +102,19 @@ const Footer = () => {
 
               {/* Columna 2 - Navegación */}
               <div>
-                <div className='inline-flex items-center gap-3 mb-6'>
-                  <div className='w-7 h-px bg-white/60' />
+                <div className='mb-6'>
                   <h4 className='text-white/90 font-semibold text-lg'>
                     Navegación
                   </h4>
+                  <div
+                    className='mt-2 h-0.5 w-24 rounded-full overflow-hidden flex'
+                    style={italianLineMask}
+                    aria-hidden
+                  >
+                    <div className='flex-1 bg-[#009246]' />
+                    <div className='flex-1 bg-white/80' />
+                    <div className='flex-1 bg-[#CE2B37]' />
+                  </div>
                 </div>
                 <ul className='space-y-3'>
                   {navigation.map((link) => (
@@ -116,38 +135,37 @@ const Footer = () => {
 
               {/* Columna 3 - Contacto */}
               <div>
-                <div className='inline-flex items-center gap-3 mb-6'>
-                  <div className='w-7 h-px bg-white/60' />
+                <div className='mb-6'>
                   <h4 className='text-white/90 font-semibold text-lg'>
                     Contacto
                   </h4>
+                  <div
+                    className='mt-2 h-0.5 w-24 rounded-full overflow-hidden flex'
+                    style={italianLineMask}
+                    aria-hidden
+                  >
+                    <div className='flex-1 bg-[#009246]' />
+                    <div className='flex-1 bg-white/80' />
+                    <div className='flex-1 bg-[#CE2B37]' />
+                  </div>
                 </div>
 
                 <div className='flex flex-col gap-3'>
-                  {/* Dirección */}
-                  {(company.adress || company.city) && (
-                    <div className='flex items-start gap-3'>
-                      <LocationIcon className='w-6 h-6 text-white/60 mt-0.5 flex-shrink-0' />
-                      {company.googlemapsLink &&
-                      company.googlemapsLink !== 'null' &&
-                      company.googlemapsLink !== '' ? (
-                        <Link
-                          href={company.googlemapsLink}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className='text-white/70 hover:text-white transition-colors duration-300 text-sm lg:text-base leading-relaxed'
-                        >
-                          <span>{company.adress && `${company.adress}, `}</span>
-                          <span>{company.city && `${company.city}`}</span>
-                        </Link>
-                      ) : (
-                        <span className='text-white/70 text-sm lg:text-base leading-relaxed'>
-                          {company.adress && `${company.adress}, `}
-                          {company.city && `${company.city}`}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  {/* Direcciones */}
+                  <div className='flex items-start gap-3'>
+                    <LocationIcon className='w-6 h-6 text-white/60 mt-0.5 flex-shrink-0' />
+                    <p className='text-white/70 text-sm lg:text-base leading-relaxed'>
+                      <span className='text-white/90 font-medium'>Sede 1:</span>{' '}
+                      Calle 11 entre 8 y 10, Sáenz Peña
+                    </p>
+                  </div>
+                  <div className='flex items-start gap-3'>
+                    <LocationIcon className='w-6 h-6 text-white/60 mt-0.5 flex-shrink-0' />
+                    <p className='text-white/70 text-sm lg:text-base leading-relaxed'>
+                      <span className='text-white/90 font-medium'>Sede 2:</span>{' '}
+                      Calle 10, Sáenz Peña
+                    </p>
+                  </div>
 
                   {/* WhatsApp */}
                   {company.whatsapp && (

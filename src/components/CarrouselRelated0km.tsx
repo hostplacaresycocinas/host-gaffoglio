@@ -192,7 +192,7 @@ const CarrouselRelated0km = ({
             clicked ? 'cursor-grabbing' : 'cursor-grab'
           } select-none`}
         >
-          <div className='flex gap-6 sm:gap-7 md:gap-8'>
+          <div className='flex'>
             {duplicatedModels.map((model, index) => {
               const sortedImages = [...model.images].sort(
                 (a, b) => a.order - b.order,
@@ -202,7 +202,7 @@ const CarrouselRelated0km = ({
               return (
                 <Link
                   href={`/0km/${brandSlug}/${modelSlug}`}
-                  className='relative overflow-hidden shrink-0 flex-[0_0_280px] min-[500px]:flex-[0_0_320px] sm:flex-[0_0_280px] md:flex-[0_0_320px] lg:flex-[0_0_300px] xl:flex-[0_0_280px] max-w-full'
+                  className='relative overflow-hidden shrink-0 flex-[0_0_280px] min-[500px]:flex-[0_0_320px] sm:flex-[0_0_280px] md:flex-[0_0_320px] lg:flex-[0_0_300px] xl:flex-[0_0_280px] max-w-full  ml-6 sm:ml-7 md:ml-8'
                   key={`${model.id}-${index}`}
                 >
                   {/* Card container con borde que se ilumina */}

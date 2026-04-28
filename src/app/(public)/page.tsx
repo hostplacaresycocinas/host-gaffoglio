@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import Proceso from '@/components/Proceso';
 import CarsHome from '@/components/CarsHome';
 import BrandsSection from '@/components/BrandsSection';
+// import TestimoniosHome from '@/components/TestimoniosHome';
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
         <BrandsSection />
         <Proceso />
         <Gallery />
+        {/* <TestimoniosHome /> */}
         <PreguntasHome />
       </main>
       <Footer />
