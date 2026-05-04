@@ -18,11 +18,11 @@ export const company = {
   googlemaps:
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3561.6018449242574!2d-60.43899570603463!3d-26.788958838005115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94412db907ceddf1%3A0x1d719607c13ddbff!2sGaffoglio%20Multimarcas!5e0!3m2!1ses-419!2sar!4v1775272558242!5m2!1ses-419!2sar',
   openHours: [
-    'Lunes 8 a 12:30 y 15:30 a 19:30hs',
-    'Martes 8 a 12:30 y 15:30 a 19:30hs',
-    'Miércoles 8 a 12:30 y 15:30 a 19:30hs',
-    'Jueves 8 a 12:30 y 15:30 a 19:30hs',
-    'Viernes 8 a 12:30 y 15:30 a 19:30hs',
+    'Lunes 8 a 12:30 y 16 a 20hs',
+    'Martes 8 a 12:30 y 16 a 20hs',
+    'Miércoles 8 a 12:30 y 16 a 20hs',
+    'Jueves 8 a 12:30 y 16 a 20hs',
+    'Viernes 8 a 12:30 y 16 a 20hs',
     'Sábado 8:30 a 12:30hs',
   ],
   footer:
