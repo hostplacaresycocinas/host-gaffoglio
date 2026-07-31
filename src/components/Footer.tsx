@@ -151,7 +151,6 @@ const Footer = () => {
                 </div>
 
                 <div className='flex flex-col gap-3'>
-
                   {/* Direcciones */}
                   <div className='flex items-start gap-3'>
                     <LocationIcon className='w-6 h-6 text-white/60 mt-0.5 flex-shrink-0' />
@@ -164,7 +163,7 @@ const Footer = () => {
                     <LocationIcon className='w-6 h-6 text-white/60 mt-0.5 flex-shrink-0' />
                     <p className='text-white/70 text-sm lg:text-base leading-relaxed'>
                       <span className='text-white/90 font-medium'>Sede 2:</span>{' '}
-                      Calle 10, Sáenz Peña
+                      Calle 10 entre 13 y 15, Sáenz Peña
                     </p>
                   </div>
 
