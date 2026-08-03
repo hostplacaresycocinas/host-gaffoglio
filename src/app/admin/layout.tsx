@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LogOut, LayoutDashboard, History, Menu, X } from 'lucide-react';
+import { LogOut, LayoutDashboard, Menu, X, BarChart3 } from 'lucide-react';
 import Cookies from 'js-cookie';
+import { company } from '@/app/constants/constants';
 
 export default function AdminLayout({
   children,
@@ -45,6 +46,13 @@ export default function AdminLayout({
 
     setIsLoading(false);
   }, [router, pathname]);
+
+  // Si la sección está desactivada en constants, redirigir al dashboard
+  useEffect(() => {
+    if (!company.analytics && pathname === '/admin/analytics') {
+      router.replace('/admin/dashboard');
+    }
+  }, [pathname, router]);
 
   const handleLogout = () => {
     Cookies.remove('admin-auth');
@@ -94,17 +102,19 @@ export default function AdminLayout({
                   <LayoutDashboard className='w-5 h-5 mr-1' />
                   Dashboard
                 </Link>
-                <Link
-                  href='/admin/historial'
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium ${
-                    pathname === '/admin/historial'
-                      ? 'border-color-primary-admin text-color-text'
-                      : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                  }`}
-                >
-                  <History className='w-5 h-5 mr-1' />
-                  Historial
-                </Link>
+                {company.analytics && (
+                  <Link
+                    href='/admin/analytics'
+                    className={`inline-flex items-center px-1 pt-1 border-b-2 text-base font-medium ${
+                      pathname === '/admin/analytics'
+                        ? 'border-color-primary-admin text-color-text'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    }`}
+                  >
+                    <BarChart3 className='w-5 h-5 mr-1' />
+                    Estadísticas
+                  </Link>
+                )}
               </div>
             </div>
             <div className='flex items-center gap-2'>
@@ -182,18 +192,20 @@ export default function AdminLayout({
                 <LayoutDashboard className='w-5 h-5 mr-3' />
                 Dashboard
               </Link>
-              <Link
-                href='/admin/historial'
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center px-4 py-3 text-base font-medium rounded-md ${
-                  pathname === '/admin/historial'
-                    ? 'bg-color-primary-admin/10 text-color-primary-admin'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-              >
-                <History className='w-5 h-5 mr-3' />
-                Historial
-              </Link>
+              {company.analytics && (
+                <Link
+                  href='/admin/analytics'
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center px-4 py-3 text-base font-medium rounded-md ${
+                    pathname === '/admin/analytics'
+                      ? 'bg-color-primary-admin/10 text-color-primary-admin'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  <BarChart3 className='w-5 h-5 mr-3' />
+                  Estadísticas
+                </Link>
+              )}
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);

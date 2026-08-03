@@ -1,4 +1,5 @@
 export const company = {
+  analytics: true,
   dark: false,
   darkmode: true,
   shortAdress: true,
